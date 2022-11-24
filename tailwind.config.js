@@ -2,6 +2,7 @@ const scroll = require("tailwind-scrollbar");
 // require('tailwindcss-animatecss');
 
 module.exports = {
+  mode: "jit",
   content: ["./src/index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {

@@ -1,6 +1,6 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 :root {
   --animate-duration: 0.2s;
@@ -20,10 +20,7 @@ body {
 .text-shadow-sm {
   text-shadow: 0px 0px 1px rgb(36 37 47 / 80%);
 }
-.conic-gradient {
-  background: #000046; /* fallback for old browsers */
-  background: linear-gradient(10deg, #e4e4e4, #5c5c5c);
-}
+
 ::-webkit-scrollbar-thumb {
   -webkit-border-radius: 10px;
   border-radius: 10px;
@@ -65,4 +62,67 @@ body {
 .app-loading-wrap {
   border-radius: 24px;
   background-color: rgb(0, 0, 0);
+}
+
+:root {
+  --animate-duration: 0.2s;
+  overflow: hidden;
+}
+* {
+  outline: none;
+}
+
+body {
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  font-weight: 400;
+  text-rendering: optimizeLegibility;
+}
+.text-shadow-sm {
+  text-shadow: 0px 0px 1px rgb(36 37 47 / 80%);
+}
+
+::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+#root {
+  border-radius: 24px;
+  background-image: linear-gradient(326deg, #060318, #000);
+}
+#main {
+  height: 100vh;
+}
+
+@keyframes highlight-warning {
+  100% {
+    border-color: #ffb3009c;
+  }
+}
+@keyframes highlight-success {
+  100% {
+    border-color: #84ff0075;
+  }
+}
+@keyframes highlight-danger {
+  100% {
+    border-color: #ff000075;
+  }
+}
+
+#main.loading-warning {
+  animation: highlight-warning 0.5s infinite alternate-reverse;
+}
+#main.loading-success {
+  animation: highlight-success 0.5s infinite alternate-reverse;
+}
+#main.loading-danger {
+  animation: highlight-danger 0.5s infinite alternate-reverse;
+}
+
+.app-loading-wrap {
+  border-radius: 24px;
+  background-color: rgb(0, 0, 0);
+  z-index: 999999;
 }

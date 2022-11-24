@@ -1,23 +1,22 @@
-import fuzzysort from 'fuzzysort';
-import React, { useMemo } from 'react';
-import { BsApp, BsEmojiSmile } from 'react-icons/bs';
-import { FiHome, FiSettings } from 'react-icons/fi';
-import { FcGoogle } from 'react-icons/fc';
-import { HiCommandLine } from 'react-icons/hi2';
-import { useNavigate } from 'react-router';
-import { GoTerminal } from 'react-icons/go';
-import useQuerybar from '../../hooks/useQuerybar';
-import { KEYS } from '../../lib/keys';
+import fuzzysort from "fuzzysort";
+import React, { useMemo } from "react";
+import { BsEmojiLaughingFill } from "react-icons/bs";
+import { IoApps } from "react-icons/io5";
+import { HiCommandLine, HiHome } from "react-icons/hi2";
+import { useNavigate } from "react-router";
+import { RiSettingsFill } from "react-icons/ri";
+import useQuerybar from "../../hooks/useQuerybar";
+import { KEYS } from "../../lib/keys";
 
-import List from '../../ui/list';
-import Config from '../config';
-import Emojis from '../emojis';
-import FlexDemo from '../demo';
-import useOpenLink from '../../hooks/useOpenLink';
-import Commands from '../commands';
-import useExecCommand from '../../hooks/useExecCommand';
-import { Child } from '@tauri-apps/api/shell';
-import { UseStatusStore } from '../../store/statusbarStore';
+import List from "../../ui/list";
+import Config from "../config";
+import Emojis from "../emojis";
+import FlexDemo from "../demo";
+import useOpenLink from "../../hooks/useOpenLink";
+import Commands from "../commands";
+import useExecCommand from "../../hooks/useExecCommand";
+import { UseStatusStore } from "../../store/statusbarStore";
+import { TailwindColors } from "../../enum/TailwindColors";
 
 type OnlyQuerybarModuleProps = {
   querybar: {
@@ -25,15 +24,23 @@ type OnlyQuerybarModuleProps = {
   };
   commands: {
     executeCommand: (cmd: string) => Promise<{
-      status: UseStatusStore['asyncStatus'];
-      data: Child | null;
+      status: UseStatusStore["asyncStatus"];
+      data: any;
     }>;
     killProcess: () => boolean;
+  };
+  browser: {
+    openLink: (link: string) => Promise<void>;
   };
 };
 type OnlyQuerybarModule = {
   onlyQuerybarFuncion: true;
-  querybarFunction?: ({ commands, querybar }: OnlyQuerybarModuleProps) => void;
+  querybarFunction?: ({
+    commands,
+    querybar,
+    browser,
+  }: OnlyQuerybarModuleProps) => void;
+  triggerWord: string;
 };
 type StandardModule = {
   onlyQuerybarFuncion: false;
@@ -44,72 +51,80 @@ type Manifest = {
   displayName: string;
   description: string;
   icon: React.ReactNode;
+  iconColor?: TailwindColors;
   entryPoint: OnlyQuerybarModule | StandardModule;
 };
 
 export const INDEX: Manifest[] = [
   {
-    module: '',
-    displayName: 'Home',
-    description: 'Home index',
-    icon: <FiHome />,
+    module: "",
+    displayName: "Home",
+    description: "Home index",
+    icon: <HiHome />,
     entryPoint: {
       onlyQuerybarFuncion: false,
-      indexComponent: <></>
-    }
+      indexComponent: <></>,
+    },
+    iconColor: TailwindColors.blue,
   },
   {
-    module: 'Emojis',
-    displayName: 'Emojis',
-    description: 'Pick your favourite emoji!',
-    icon: <BsEmojiSmile />,
+    module: "Emojis",
+    displayName: "Emojis",
+    description: "Pick your favourite emoji!",
+    icon: <BsEmojiLaughingFill />,
     entryPoint: {
       onlyQuerybarFuncion: false,
-      indexComponent: <Emojis />
-    }
+      indexComponent: <Emojis />,
+    },
+    iconColor: TailwindColors.amber,
   },
   {
-    module: 'Apps',
-    displayName: 'Apps',
-    description: 'Apps!',
-    icon: <BsApp />,
+    module: "Apps",
+    displayName: "Apps",
+    description: "Apps!",
+    icon: <IoApps />,
     entryPoint: {
       onlyQuerybarFuncion: false,
-      indexComponent: <FlexDemo />
-    }
+      indexComponent: <FlexDemo />,
+    },
+    iconColor: TailwindColors.emerald,
   },
   {
-    module: 'Commands',
-    displayName: 'Commands',
-    description: 'Save useful commands and secuences',
+    module: "Commands",
+    displayName: "Commands",
+    description: "Save useful commands and secuences",
     icon: <HiCommandLine />,
     entryPoint: {
       onlyQuerybarFuncion: false,
-      indexComponent: <Commands />
-    }
+      indexComponent: <RiSettingsFill />,
+    },
+    iconColor: TailwindColors.indigo,
   },
   {
-    module: 'Run command',
-    displayName: 'Run command',
-    description: 'Run command from Query bar',
-    icon: '🚀',
+    module: "Run command",
+    displayName: "Run command",
+    description: "Run command from Query bar",
+    icon: "🚀",
     entryPoint: {
       onlyQuerybarFuncion: true,
       querybarFunction: ({ commands, querybar }) => {
         commands.executeCommand(querybar.querybarValue);
-      }
-    }
+      },
+      triggerWord: "/",
+    },
+    iconColor: TailwindColors.orange,
   },
   {
-    module: 'Settings',
-    displayName: 'Settings',
-    description: 'Customize your spotlight',
-    icon: <FiSettings />,
+    module: "Settings",
+    displayName: "Settings",
+    description: "Customize Sittly",
+    icon: <RiSettingsFill />,
     entryPoint: {
       onlyQuerybarFuncion: false,
-      indexComponent: <Config />
-    }
-  }
+      indexComponent: <Config />,
+    },
+    iconColor: TailwindColors.red,
+  },
 ];
 
 const Index = () => {
@@ -118,24 +133,41 @@ const Index = () => {
   const { openLink } = useOpenLink();
   const { executeCommand, killProcess } = useExecCommand();
 
+  const DEFAULT_ITEM = {
+    icon: "🔍",
+    displayName: "Google",
+    module: "Google",
+    description: `Buscar '${value}' en google`,
+    entryPoint: {
+      onlyQuerybarFuncion: true,
+      triggerWord: "g:",
+      querybarFunction: ({ querybar, browser }) => {
+        browser.openLink(
+          `https://google.com/search?q=${querybar.querybarValue}`
+        );
+      },
+    },
+  };
+
   const memoizedIndex: Manifest[] = useMemo(() => {
-    if (!value) return INDEX.filter((item) => !item.entryPoint.onlyQuerybarFuncion);
-    const filtered = fuzzysort
+    if (!value)
+      return INDEX.filter((item) => !item.entryPoint.onlyQuerybarFuncion);
+    const notQuerybarFunctionItems = fuzzysort
       .go(value, INDEX, {
-        key: 'displayName'
+        key: "displayName",
       })
       .map(({ obj }) => obj)
       .filter((item) => !item.entryPoint.onlyQuerybarFuncion);
-    if (filtered.length > 0) return filtered;
-    return [
-      ...INDEX.filter((mod) => mod.entryPoint.onlyQuerybarFuncion),
-      {
-        icon: <FcGoogle />,
-        displayName: 'Google',
-        module: 'Google',
-        description: `Buscar '${value}' en google`
-      }
-    ];
+    if (notQuerybarFunctionItems.length > 0) return notQuerybarFunctionItems;
+
+    const findByTriggeringWord = INDEX.concat(DEFAULT_ITEM).filter(
+      (item) =>
+        item.entryPoint.onlyQuerybarFuncion &&
+        new RegExp(`${item.entryPoint.triggerWord}.*`, "i").test(value)
+    );
+    return findByTriggeringWord.length > 0
+      ? findByTriggeringWord
+      : [DEFAULT_ITEM];
   }, [value]);
 
   return (
@@ -148,32 +180,34 @@ const Index = () => {
             subtitle={item.description}
             staging={{
               nextStage: {
-                to: item.module
-              }
+                to: item.module,
+              },
             }}
+            iconColor={item.iconColor}
             icon={item.icon}
             action={{
               callback: () => {
-                if (item.module === 'Google') {
-                  openLink(`https://google.com/search?q=${value}`);
-                }
-
                 if (item.entryPoint.onlyQuerybarFuncion) {
                   item.entryPoint.querybarFunction?.({
                     querybar: {
                       querybarValue: value
+                        .replace(item.entryPoint.triggerWord, "")
+                        .trim(),
                     },
                     commands: {
                       executeCommand,
-                      killProcess
-                    }
+                      killProcess,
+                    },
+                    browser: {
+                      openLink,
+                    },
                   });
                 } else {
                   navigate(item.module);
                 }
               },
-              explanation: 'Ir',
-              keys: [KEYS.Enter]
+              explanation: "Ir",
+              keys: [KEYS.Enter],
             }}
           />
         ))}

@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
+import { TailwindColors } from "./enum/TailwindColors";
 import {
   findLeftTabStop,
   findNextTabStop,
@@ -11,10 +12,10 @@ import { AsyncStatusEnum, useStatusStore } from "./store/statusbarStore";
 const { ipcRenderer } = require("electron");
 
 const KeyboardHandlerComponent = () => {
+  const navigation = useNavigate();
   const location = useLocation();
   const hideHelper = useHelper((state) => state.hideHelper);
   const asyncStatus = useStatusStore((state) => state.asyncStatus);
-
   useEffect(() => {
     switch (asyncStatus) {
       case AsyncStatusEnum.IN_PROGRESS:
@@ -106,7 +107,8 @@ const KeyboardHandlerComponent = () => {
         return;
       }
       if (e.key === "Escape") {
-        return ipcRenderer.send("hide-window");
+        if (location.pathname === "/") return ipcRenderer.send("hide-window");
+        return navigation("../");
       }
 
       if (e.key === "f" && e.ctrlKey) {
@@ -159,7 +161,13 @@ const KeyboardHandlerComponent = () => {
   }, [location.pathname]);
 
   return (
-    <div className="text-lg text-xl text-2xl text-3xl text-4xl text-5xl text-6xl text-7xl" />
+    <div
+      className={`text-lg text-xl text-2xl text-3xl text-4xl text-5xl text-6xl text-7xl ${Object.keys(
+        TailwindColors
+      )
+        .map((k) => `bg-gradient-to-tr from-${k}-400 to-${k}-600`)
+        .join(" ")}`}
+    />
   );
 };
 

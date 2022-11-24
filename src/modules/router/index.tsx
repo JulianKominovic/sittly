@@ -1,13 +1,12 @@
-import React from "react";
-import { Route, Routes } from "react-router-dom";
 import styled from "styled-components";
 import Navbar from "../navbar";
-import Index, { INDEX } from "../index/index";
 import Footer from "../layout/Footer";
-import { useSettings } from "../../store/settingsStore";
 import Querybar from "../layout/Querybar";
 import Helper from "../layout/Helper";
 import KeyboardHandlerComponent from "../../KeyboardHandlerComponent";
+import { Route, Routes } from "react-router-dom";
+import { useSettings } from "../../store/settingsStore";
+import Index, { INDEX } from "../index/index";
 
 const Wrapper = styled.div<{ colorPallette: Record<string, string> }>`
   ${({ colorPallette }) =>

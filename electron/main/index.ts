@@ -27,6 +27,8 @@ import { release } from "os";
 import { join } from "path";
 import path from "path";
 
+const SHOW_APP_SHORCUT = "Ctrl+Alt+K";
+
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith("6.1")) app.disableHardwareAcceleration();
 
@@ -102,7 +104,7 @@ async function createWindow() {
 app.whenReady().then(createWindow);
 app.whenReady().then(() => {
   // Register a 'CommandOrControl+X' shortcut listener.
-  const registeredShow = globalShortcut.register("Super+K", () => {
+  const registeredShow = globalShortcut.register(SHOW_APP_SHORCUT, () => {
     win.show();
     win?.focus();
   });
@@ -112,7 +114,7 @@ app.whenReady().then(() => {
   }
 
   // Check whether a shortcut is registered.
-  console.log(globalShortcut.isRegistered("Super+K"));
+  console.log(globalShortcut.isRegistered(SHOW_APP_SHORCUT));
 });
 
 app.on("before-quit", function () {
@@ -165,7 +167,7 @@ app.on("activate", () => {
 
 app.on("will-quit", () => {
   // Unregister a shortcut.
-  globalShortcut.unregister("Super+K");
+  globalShortcut.unregister(SHOW_APP_SHORCUT);
 
   // Unregister all shortcuts.
   globalShortcut.unregisterAll();
