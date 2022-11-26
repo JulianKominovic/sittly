@@ -12,7 +12,7 @@ const InputTemplate = ({ id, label, children, error }: InputTemplateProps) => {
   return (
     <hgroup className="flex flex-col ">
       <label
-        className={`text-sm ${error ? "text-red-400" : "text-gray-500"}`}
+        className={`text-sm ${error ? "text-red-400" : "text-color-normal"}`}
         htmlFor={id}
       >
         {label}

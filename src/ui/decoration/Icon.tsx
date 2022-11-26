@@ -11,7 +11,7 @@ const renderIcon = (
   return (
     React.cloneElement(icon, {
       className:
-        "w-9 h-9 text-gray-50 p-1 rounded-md text-gray-900 text-shadow-sm shadow-sm bg-gradient-to-tr from-cyan-400 to-purple-400",
+        "w-9 h-9 text-color-light p-1 rounded-md text-color-opaque text-shadow-sm shadow-sm bg-gradient-to-tr from-cyan-400 to-purple-400",
     }) || null
   );
 };
@@ -26,7 +26,7 @@ const Icon = (props: IconProps) => {
   if (props.imageSrc && props.title)
     return (
       <img
-        className="text-gray-50 p-1 rounded-md"
+        className="text-color-light p-1 rounded-md"
         src={props.imageSrc}
         alt={props.title}
         width="32px"

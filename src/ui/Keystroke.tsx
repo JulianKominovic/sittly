@@ -1,18 +1,18 @@
-import React from 'react';
-import { KEYS } from '../lib/keys';
+import React from "react";
+import { KEYS } from "../lib/keys";
 
 export type TypeKeystroke = {
   id: string;
   keys: KEYS[];
-  size?: 'sm' | 'xs' | 'xxs';
+  size?: "sm" | "xs" | "xxs";
   rounded?: boolean;
 };
 
-function Keystroke({ id, keys, size = 'sm', rounded }: TypeKeystroke) {
+function Keystroke({ id, keys, size = "sm", rounded }: TypeKeystroke) {
   return (
     <hgroup
-      className={`flex gap-1 items-center bg-gray-800 border border-gray-700 ${
-        rounded ? 'rounded-full' : 'rounded-md'
+      className={`flex gap-1 items-center bg-gray-800 border border-color-opaque ${
+        rounded ? "rounded-full" : "rounded-md"
       } px-2 text-[12px] whitespace-nowrap`}
     >
       {keys.map((key, index) => (
@@ -21,12 +21,14 @@ function Keystroke({ id, keys, size = 'sm', rounded }: TypeKeystroke) {
             <kbd
               id={id + index + key}
               data-highlight-key={key}
-              className={`${size === 'xxs' ? 'text-[12px]' : `text-${size}`} font-sans`}
+              className={`${
+                size === "xxs" ? "text-[12px]" : `text-${size}`
+              } font-sans`}
             >
               {key}
             </kbd>
           </div>
-          {index < keys.length - 1 ? ' + ' : null}
+          {index < keys.length - 1 ? " + " : null}
         </>
       ))}
     </hgroup>

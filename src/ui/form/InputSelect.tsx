@@ -50,7 +50,7 @@ function SelectOption({
   return (
     <button
       ref={(e) => opt.value === selectedOption.value}
-      className={`flex items-center gap-2 px-2 rounded-lg min-h-[36px] ${focusedClasses()} border-gray-800 ${hoverClasses()} w-full`}
+      className={`flex items-center gap-2 px-2 rounded-lg min-h-[36px] ${focusedClasses()} border-color-opaque ${hoverClasses()} w-full`}
       onClick={() => {
         parentRef.current.focus();
         setSelectedOption({ display: opt.display, value: opt.value });

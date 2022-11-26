@@ -2,10 +2,6 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-:root {
-  --animate-duration: 0.2s;
-  overflow: hidden;
-}
 * {
   outline: none;
 }
@@ -64,26 +60,48 @@ body {
   background-color: rgb(0, 0, 0);
 }
 
+:root {
+  --animate-duration: 0.2s;
+  overflow: hidden;
+
+  --text-color-opaque: #4e4e4e;
+  --text-color-normal: #7e7e7e;
+  --text-color-light: #a7a7a7;
+  --border-color-light: #f9fafb;
+  --border-color-normal: #707070;
+  --border-color-opaque: #3d3d3d;
+  --background-color: #171717;
+}
 .text-color-opaque {
-  color: #4e4e4e;
+  color: var(--text-color-opaque);
 }
 .text-color-normal {
-  color: #949494;
+  color: var(--text-color-normal) !important;
 }
 .text-color-light {
-  color: #f9fafb;
+  color: var(--text-color-light) !important;
 }
 
-.border-color {
-  border-color: #f9fafb;
+.border-color-light {
+  border-color: var(--border-color-light) !important;
 }
 .border-color-normal {
-  border-color: #707070;
+  border-color: var(--border-color-normal) !important;
 }
 .border-color-opaque {
-  border-color: #3d3d3d;
+  border-color: var(--border-color-opaque) !important;
+}
+
+.border-color-normal:focus {
+  border-color: var(--border-color-light) !important;
+}
+.border-color-opaque :focus {
+  border-color: var(--border-color-normal) !important;
 }
 
 .background-color {
-  background: #171717;
+  background: var(--background-color) !important;
+}
+.focusdownsidediv-border-color-opaque:focus > div {
+  border-color: var(--border-color-normal) !important;
 }

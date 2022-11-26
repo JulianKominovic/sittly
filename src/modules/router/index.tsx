@@ -86,7 +86,7 @@ function Searchbar() {
   return (
     <Wrapper
       colorPallette={colorPallette}
-      className="text-gray-300 rounded-2xl rounded-b-3xl border-2 border-gray-700 overflow-hidden bg-gray-800"
+      className="text-color-light rounded-2xl rounded-b-3xl border-2 border-color-opaque overflow-hidden bg-gray-800"
       id="main"
     >
       <Querybar />

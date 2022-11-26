@@ -26,9 +26,7 @@ export type ListItemProps = {
   action?: Action;
   alwaysShowKeys?: boolean;
   helperActions?: HelperAction[];
-  staging?: {
-    nextStage?: Stage;
-  };
+
   icon?: React.ReactNode | SVGElement | string;
   iconSize?: FontSizeType;
   iconColor?: TailwindColors;
@@ -42,7 +40,6 @@ function ListItem({
   subtitle,
   imageSrc,
   action,
-  staging,
   icon,
   iconSize = "base",
   helperActions,
@@ -75,8 +72,6 @@ function ListItem({
           return key === e.code;
         })
     ) {
-      e.preventDefault();
-
       act.callback(props);
     }
   };
@@ -84,11 +79,6 @@ function ListItem({
   return (
     <button
       {...props}
-      // initial={{ translateX: 40, opacity: 0 }}
-      // animate={{ translateX: 0, opacity: 1 }}
-      // exit={{ translateX: 40, opacity: 0 }}
-      // transition={{ duration: 0.2 }}
-      data-stagenext={staging?.nextStage?.to}
       className={`flex items-center justify-between gap-2 mb-1 border-transparent ${focusedClasses()} ${hoverClasses()} rounded-lg p-2 text-sm w-full max-w-full active:scale-95 active:bg-gray-600 transition-transform`}
       tabIndex={0}
       onFocus={(e) => {
@@ -117,19 +107,6 @@ function ListItem({
           showHelper(e.currentTarget);
           return;
         }
-        if (action) {
-          handleActionKeys(action, e);
-        }
-
-        e.currentTarget.focus();
-        action?.callback?.(props);
-      }}
-      onKeyDown={(e) => {
-        if (helperActions?.length > 0) {
-          helperActions.forEach((act) => {
-            handleActionKeys(act, e);
-          });
-        }
       }}
       onBlur={(e) => {
         hideHelperAdvise();
@@ -137,11 +114,25 @@ function ListItem({
         if (keystrokeRef.current && !alwaysShowKeys)
           keystrokeRef.current.style.display = "none";
       }}
+      onKeyDown={(e) => {
+        if (e.code === "Space") {
+          action?.callback?.(props);
+          return;
+        }
+        if (
+          action?.keys.every(
+            (k) =>
+              k === e.code ||
+              k === e.key ||
+              k === e.keyCode ||
+              (k === KEYS.ControlLeft && e.ctrlKey)
+          )
+        ) {
+          action?.callback?.(props);
+        }
+      }}
     >
-      <main
-        // layout
-        className="flex items-center gap-2"
-      >
+      <main className="flex items-center gap-2">
         {location.pathname.split("/").filter(Boolean).length > 1 ? (
           <aside className="flex gap-2 items-center justify-center">
             <Keystroke rounded id={title} keys={[KEYS.ArrowLeft]} />
@@ -167,11 +158,6 @@ function ListItem({
 
       <div
         ref={keystrokeRef}
-        // layout
-        // key={id + 'k'}
-        // initial={{ translateX: -10, opacity: 0 }}
-        // animate={{ translateX: 0, opacity: 1 }}
-        // exit={{ translateX: -10, opacity: 0 }}
         className={`${alwaysShowKeys ? "flex" : "hidden"} gap-2`}
       >
         {action ? (

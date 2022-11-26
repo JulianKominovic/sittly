@@ -16,7 +16,7 @@ const Helper = () => {
   if (!showingHelper) return null;
   return (
     <main
-      className="z-20 bottom-10 right-4 w-4/6 flex fixed rounded-xl border border-gray-600 backdrop-blur-md max-h-60 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-700 p-2"
+      className="z-20 bottom-10 right-4 w-4/6 flex fixed rounded-xl border border-color-normal backdrop-blur-md max-h-60 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-700 p-2"
       // initial={{ translateY: 100 }}
       // animate={{ translateY: 0 }}
       // exit={{ translateY: -100 }}
@@ -38,6 +38,7 @@ const Helper = () => {
                 index
               ) => (
                 <List.Item
+                  key={"hpr" + index}
                   is-helper-option="true"
                   data-helper-option="true"
                   autoFocus={index === 0}

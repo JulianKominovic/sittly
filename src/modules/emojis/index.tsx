@@ -35,7 +35,7 @@ const Emojis = () => {
             },
             iconSize: "3xl",
             explanation: "Copiar",
-            keys: [KEYS.Enter],
+            keys: [KEYS.Space],
             subtitle: "Copiar este emoji",
             title: variation.description,
           }));

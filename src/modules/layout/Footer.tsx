@@ -46,7 +46,7 @@ const Footer = () => {
   const paths = pathname.split("/").filter(Boolean);
   return (
     <footer
-      className={`bg-black bg-opacity-60 z-10 left-0 bottom-0 backdrop-blur-sm rounded-3xl rounded-t-none w-[calc(100%-2px)] px-6 py-2 h-[38px] fixed overflow-hidden flex items-center justify-between text-xs border border-gray-800 ${chooseStatusGradients(
+      className={`bg-black bg-opacity-60 z-10 left-0 bottom-0 backdrop-blur-sm rounded-3xl rounded-t-none w-[calc(100%-2px)] px-6 py-2 h-[38px] fixed overflow-hidden flex items-center justify-between text-xs border border-color-opaque ${chooseStatusGradients(
         asyncStatus
       )} before:w-full before:z-10 before:h-16 rounded-full before:left-0 before:top-0 before:absolute before:opacity-40 ${
         asyncStatus === AsyncStatusEnum.IN_PROGRESS

@@ -33,7 +33,7 @@ const Checkbox = ({
         if (setChecked) setChecked(index as number);
         else setLocalChecked((prev) => !prev);
       }}
-      className="flex w-fit items-center gap-2 [&:focus>div.checkbox]:focus:border-gray-300"
+      className="flex w-fit items-center gap-2 focusdownsidediv-border-color-opaque"
     >
       <input
         type="checkbox"
@@ -58,7 +58,7 @@ const Checkbox = ({
       </div>
 
       <aside className="flex flex-col justify-start items-start">
-        <small className="text-gray-400">{description}</small>
+        <small className="text-color-normal">{description}</small>
         <label htmlFor={uniqueId}>{title}</label>
       </aside>
     </button>

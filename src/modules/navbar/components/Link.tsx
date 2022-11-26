@@ -25,7 +25,7 @@ function Link({ id, title, index }: Props) {
         `border rounded-lg px-2 py-1 flex items-center gap-2 text-sm whitespace-pre ${hoverClasses()} ${
           (isActive && id !== "" && location.pathname !== "/") ||
           (id === "" && location.pathname === "/")
-            ? "border-gray-400"
+            ? "border-color-normal"
             : "border-transparent"
         } `
       }
