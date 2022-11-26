@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { BsCheck } from 'react-icons/bs';
-import { GoPrimitiveDot } from 'react-icons/go';
-import { focusedClasses, hoverClasses } from '../styles';
+import React, { useState } from "react";
+import { BsCheck } from "react-icons/bs";
+import { GoPrimitiveDot } from "react-icons/go";
+import { borderClasses, focusedClasses, hoverClasses } from "../styles";
 
 type CheckboxProps = {
   uniqueId: string;
@@ -14,7 +14,16 @@ type CheckboxProps = {
   index?: number;
 };
 
-const Checkbox = ({ uniqueId, setChecked, checked, description, title, onChecked, rounded, index }: CheckboxProps) => {
+const Checkbox = ({
+  uniqueId,
+  setChecked,
+  checked,
+  description,
+  title,
+  onChecked,
+  rounded,
+  index,
+}: CheckboxProps) => {
   const [localChecked, setLocalChecked] = useState(false);
   const selectedIndex = checked === index;
   return (
@@ -24,12 +33,18 @@ const Checkbox = ({ uniqueId, setChecked, checked, description, title, onChecked
         if (setChecked) setChecked(index as number);
         else setLocalChecked((prev) => !prev);
       }}
-      className="flex w-fit items-center gap-2 [&:focus>div.checkbox]:focus:border-gray-700 [&:focus>div.checkbox]:focus:border-gray-600"
+      className="flex w-fit items-center gap-2 [&:focus>div.checkbox]:focus:border-gray-300"
     >
-      <input type="checkbox" name={uniqueId} id={uniqueId} hidden checked={selectedIndex || localChecked} />
+      <input
+        type="checkbox"
+        name={uniqueId}
+        id={uniqueId}
+        hidden
+        checked={selectedIndex || localChecked}
+      />
       <div
-        className={`checkbox h-5 w-5 bg-gray-800 flex items-center justify-center ${hoverClasses()} ${focusedClasses()} ${
-          rounded ? 'rounded-full' : 'rounded-md'
+        className={`checkbox h-5 w-5 bg-gray-800 flex items-center justify-center ${borderClasses} ${hoverClasses()} ${focusedClasses()} ${
+          rounded ? "rounded-full" : "rounded-md"
         }`}
       >
         {(() => {

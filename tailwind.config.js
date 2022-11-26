@@ -2,8 +2,21 @@ const scroll = require("tailwind-scrollbar");
 // require('tailwindcss-animatecss');
 
 module.exports = {
-  mode: "jit",
   content: ["./src/index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  safelist: [
+    {
+      pattern: /text-.*/,
+      variants: ["after", "focus", "hover", "active"],
+    },
+    {
+      pattern: /bg-(.*)-(.*)/,
+      variants: ["after", "focus", "hover", "active"],
+    },
+    {
+      pattern: /border-(.*)-(.*)/,
+      variants: ["after", "focus", "hover", "active"],
+    },
+  ],
   theme: {
     extend: {
       colors: {

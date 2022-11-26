@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import firstLetterUpperCase from "../../lib/firstLetterUpperCase";
 import { KEYS } from "../../lib/keys";
 import Keystroke from "../Keystroke";
-import { focusedClasses, hoverClasses } from "../styles";
+import { borderClasses, focusedClasses, hoverClasses } from "../styles";
 import { HelperAction, useHelper } from "../../store/helperStore";
 import { FontSizeType } from "../../types/fontSize";
 import Icon from "../decoration/Icon";
@@ -52,7 +52,6 @@ function ListItem({
   iconColor,
   ...props
 }: ListItemProps) {
-  const [pressed, setPressed] = useState(false);
   const location = useLocation();
   const keystrokeRef = useRef<HTMLDivElement | null>(null);
 
@@ -64,15 +63,6 @@ function ListItem({
   const showHelper = useHelper((state) => state.showHelper);
   const hideHelper = useHelper((state) => state.hideHelper);
 
-  const firePress = async () => {
-    setPressed(true);
-    await new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(0);
-      }, 210);
-    });
-    setPressed(false);
-  };
   const handleActionKeys = (act: Action, e: KeyboardEvent) => {
     if (
       act.keys
@@ -88,7 +78,6 @@ function ListItem({
       e.preventDefault();
 
       act.callback(props);
-      firePress();
     }
   };
 
@@ -100,11 +89,7 @@ function ListItem({
       // exit={{ translateX: 40, opacity: 0 }}
       // transition={{ duration: 0.2 }}
       data-stagenext={staging?.nextStage?.to}
-      className={`flex items-center justify-between gap-2 mb-1 ${focusedClasses()} ${hoverClasses()} rounded-lg p-2 text-sm w-full max-w-full ${
-        pressed
-          ? "animate__animated animate__pulse bg-gray-800 duration-150"
-          : ""
-      }`}
+      className={`flex items-center justify-between gap-2 mb-1 border-transparent ${focusedClasses()} ${hoverClasses()} rounded-lg p-2 text-sm w-full max-w-full active:scale-95 active:bg-gray-600 transition-transform`}
       tabIndex={0}
       onFocus={(e) => {
         if (
@@ -128,26 +113,18 @@ function ListItem({
         onFocus?.(e.target);
       }}
       onClick={(e) => {
-        if (e.ctrlKey) return;
-        if (pressed) return;
-        firePress();
-        e.currentTarget.focus();
-        action?.callback?.(props);
-      }}
-      onKeyDown={(e) => {
-        if (pressed) return;
-        if (
-          e.ctrlKey &&
-          e.nativeEvent.code === "Space" &&
-          showingHelperAdvise
-        ) {
-          e.preventDefault();
+        if (e.ctrlKey && showingHelperAdvise) {
           showHelper(e.currentTarget);
           return;
         }
         if (action) {
           handleActionKeys(action, e);
         }
+
+        e.currentTarget.focus();
+        action?.callback?.(props);
+      }}
+      onKeyDown={(e) => {
         if (helperActions?.length > 0) {
           helperActions.forEach((act) => {
             handleActionKeys(act, e);
@@ -155,7 +132,6 @@ function ListItem({
         }
       }}
       onBlur={(e) => {
-        setPressed(false);
         hideHelperAdvise();
         onBlur?.(e.currentTarget);
         if (keystrokeRef.current && !alwaysShowKeys)

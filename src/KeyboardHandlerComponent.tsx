@@ -106,10 +106,6 @@ const KeyboardHandlerComponent = () => {
 
         return;
       }
-      if (e.key === "Escape") {
-        if (location.pathname === "/") return ipcRenderer.send("hide-window");
-        return navigation("../");
-      }
 
       if (e.key === "f" && e.ctrlKey) {
         e.preventDefault();
@@ -158,6 +154,19 @@ const KeyboardHandlerComponent = () => {
 
   useEffect(() => {
     document.querySelector("#query-bar").focus();
+    const handleExit = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        if (location.pathname === "/") return ipcRenderer.send("hide-window");
+        return navigation("../", {
+          relative: "path",
+        });
+      }
+    };
+    window.addEventListener("keydown", handleExit);
+    return () => {
+      window.removeEventListener("keydown", handleExit);
+    };
   }, [location.pathname]);
 
   return (

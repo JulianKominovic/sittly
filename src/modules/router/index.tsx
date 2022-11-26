@@ -12,6 +12,7 @@ const Wrapper = styled.div<{ colorPallette: Record<string, string> }>`
   ${({ colorPallette }) =>
     Object.entries(colorPallette)
       .map(([key, value]) => {
+        console.log(key, value);
         return `
       
 *.scrollbar-track-gray-${key} {
@@ -33,6 +34,9 @@ const Wrapper = styled.div<{ colorPallette: Record<string, string> }>`
   border-color: ${value} !important;
 }
 *.text-gray-${key} {
+  color: ${value} !important;
+}
+*.text-slate-${key} {
   color: ${value} !important;
 }
 *.bg-slate-${key} {
@@ -78,11 +82,11 @@ const Wrapper = styled.div<{ colorPallette: Record<string, string> }>`
 
 function Searchbar() {
   const colorPallette = useSettings((state) => state.colorPallette);
-
+  console.log(colorPallette);
   return (
     <Wrapper
       colorPallette={colorPallette}
-      className="text-gray-300 rounded-2xl rounded-b-3xl border-2 border-gray-700 overflow-hidden"
+      className="text-gray-300 rounded-2xl rounded-b-3xl border-2 border-gray-700 overflow-hidden bg-gray-800"
       id="main"
     >
       <Querybar />
@@ -90,14 +94,13 @@ function Searchbar() {
       <main className="w-full scrollbar-thin scrollbar-track-gray-900 scrollbar-thumb-gray-800 scrollbar-rounded-lg scrollbar max-h-[280px] px-4 py-2 pb-10 overflow-hidden rounded-b-2xl">
         <Routes>
           <Route path="/" index element={<Index />} />
-          {INDEX.map((route) => (
-            <Route
-              path={"/" + route.module}
-              element={
-                !route.entryPoint.onlyQuerybarFuncion &&
-                route.entryPoint.indexComponent
-              }
-            />
+          {INDEX.map((mod) => (
+            <Route path={"/" + mod.module}>
+              {!mod.entryPoint.onlyQuerybarFuncion &&
+                mod.entryPoint.routes.map((props) => (
+                  <Route index {...props} />
+                ))}
+            </Route>
           ))}
         </Routes>
       </main>

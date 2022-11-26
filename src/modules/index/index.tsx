@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { BsEmojiLaughingFill } from "react-icons/bs";
 import { IoApps } from "react-icons/io5";
 import { HiCommandLine, HiHome } from "react-icons/hi2";
-import { useNavigate } from "react-router";
+import { Route, RouteObject, RouteProps, useNavigate } from "react-router";
 import { RiSettingsFill } from "react-icons/ri";
 import useQuerybar from "../../hooks/useQuerybar";
 import { KEYS } from "../../lib/keys";
@@ -17,6 +17,8 @@ import Commands from "../commands";
 import useExecCommand from "../../hooks/useExecCommand";
 import { UseStatusStore } from "../../store/statusbarStore";
 import { TailwindColors } from "../../enum/TailwindColors";
+import Routes, { RoutesProps } from "../../ui/router/Routes";
+import CreateCommand from "../commands/create";
 
 type OnlyQuerybarModuleProps = {
   querybar: {
@@ -27,7 +29,6 @@ type OnlyQuerybarModuleProps = {
       status: UseStatusStore["asyncStatus"];
       data: any;
     }>;
-    killProcess: () => boolean;
   };
   browser: {
     openLink: (link: string) => Promise<void>;
@@ -44,7 +45,7 @@ type OnlyQuerybarModule = {
 };
 type StandardModule = {
   onlyQuerybarFuncion: false;
-  indexComponent?: React.ReactNode;
+  routes: RouteProps[];
 };
 type Manifest = {
   module: string;
@@ -63,7 +64,12 @@ export const INDEX: Manifest[] = [
     icon: <HiHome />,
     entryPoint: {
       onlyQuerybarFuncion: false,
-      indexComponent: <></>,
+      routes: [
+        {
+          index: true,
+          element: <></>,
+        },
+      ],
     },
     iconColor: TailwindColors.blue,
   },
@@ -74,7 +80,12 @@ export const INDEX: Manifest[] = [
     icon: <BsEmojiLaughingFill />,
     entryPoint: {
       onlyQuerybarFuncion: false,
-      indexComponent: <Emojis />,
+      routes: [
+        {
+          index: true,
+          element: <Emojis />,
+        },
+      ],
     },
     iconColor: TailwindColors.amber,
   },
@@ -85,7 +96,12 @@ export const INDEX: Manifest[] = [
     icon: <IoApps />,
     entryPoint: {
       onlyQuerybarFuncion: false,
-      indexComponent: <FlexDemo />,
+      routes: [
+        {
+          index: true,
+          element: <FlexDemo />,
+        },
+      ],
     },
     iconColor: TailwindColors.emerald,
   },
@@ -96,7 +112,16 @@ export const INDEX: Manifest[] = [
     icon: <HiCommandLine />,
     entryPoint: {
       onlyQuerybarFuncion: false,
-      indexComponent: <RiSettingsFill />,
+      routes: [
+        {
+          index: true,
+          element: <Commands />,
+        },
+        {
+          path: "create",
+          element: <CreateCommand />,
+        },
+      ],
     },
     iconColor: TailwindColors.indigo,
   },
@@ -121,17 +146,21 @@ export const INDEX: Manifest[] = [
     icon: <RiSettingsFill />,
     entryPoint: {
       onlyQuerybarFuncion: false,
-      indexComponent: <Config />,
+      routes: [
+        {
+          index: true,
+          element: <Config />,
+        },
+      ],
     },
     iconColor: TailwindColors.red,
   },
 ];
-
 const Index = () => {
   const navigate = useNavigate();
   const { value } = useQuerybar();
   const { openLink } = useOpenLink();
-  const { executeCommand, killProcess } = useExecCommand();
+  const { executeCommand } = useExecCommand();
 
   const DEFAULT_ITEM = {
     icon: "🔍",

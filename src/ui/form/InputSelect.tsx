@@ -1,16 +1,16 @@
-import React, { Ref, useEffect, useRef, useState } from 'react';
-import { BsArrowDownCircleFill } from 'react-icons/bs';
-import { KEYS } from '../../lib/keys';
-import Keystroke from '../Keystroke';
-import { focusedClasses, hoverClasses } from '../styles';
-import { InputStyles } from './FormElementsStyles';
-import useInput from './InputStore';
-import InputTemplate from './InputTemplate';
+import React, { Ref, useEffect, useRef, useState } from "react";
+import { BsArrowDownCircleFill } from "react-icons/bs";
+import { KEYS } from "../../lib/keys";
+import Keystroke from "../Keystroke";
+import { focusedClasses, hoverClasses } from "../styles";
+import { InputStyles } from "./FormElementsStyles";
+import useInput from "./InputStore";
+import InputTemplate from "./InputTemplate";
 
 export type Validation = {
   validationFn: (value: string) => boolean;
   errorMessage: string;
-  severity: 'warning' | 'danger';
+  severity: "warning" | "danger";
 };
 
 type Option = {
@@ -34,6 +34,7 @@ type OptionProps = {
   selectedOption: Option;
   options: Option[];
   parentRef: Ref<HTMLButtonElement>;
+  onSelect: (props: Omit<Option, "onSelect">) => void;
 } & Props;
 
 function SelectOption({
@@ -43,7 +44,8 @@ function SelectOption({
   setOpenOptions,
   selectedOption,
   id,
-  parentRef
+  parentRef,
+  onSelect,
 }: OptionProps) {
   return (
     <button
@@ -54,6 +56,7 @@ function SelectOption({
         setSelectedOption({ display: opt.display, value: opt.value });
         onChange?.(String(opt.value));
         setOpenOptions(false);
+        onSelect?.({ display: opt.display, value: opt.value });
       }}
       role="option"
       aria-selected={selectedOption.value === opt.value}
@@ -67,13 +70,13 @@ function SelectOption({
         className="rounded-md appearance-none block w-2 h-2 bg-gray-800  checked:bg-yellow-500 checked:border checked:border-yellow-400"
         checked={selectedOption.value === opt.value}
       />
-      {typeof opt.display === 'function' ? opt.display() : opt.display || null}
+      {typeof opt.display === "function" ? opt.display() : opt.display || null}
     </button>
   );
 }
 
 const InputSelect = (props: Props) => {
-  const { id, onChange, defaultValue, options }: Props = props;
+  const { id, defaultValue, options }: Props = props;
   const { error } = useInput();
   const optionDisplayRef = useRef<null | HTMLButtonElement>(null);
   const [openOptions, setOpenOptions] = useState(false);
@@ -82,18 +85,24 @@ const InputSelect = (props: Props) => {
       const matchingValue = options.find((opt) => opt.value === defaultValue);
       return {
         display: matchingValue?.display || <p>Default</p>,
-        value: matchingValue?.value || 'Default'
+        value: matchingValue?.value || "Default",
       };
     }
     return {
       display: options[0]?.display || <p>Default</p>,
-      value: options[0]?.value || 'Default'
+      value: options[0]?.value || "Default",
     };
   });
 
   return (
     <InputTemplate {...props} error={error}>
-      <input hidden type="text" className={InputStyles(!!error)} name={id} id={id} />
+      <input
+        hidden
+        type="text"
+        className={InputStyles(!!error)}
+        name={id}
+        id={id}
+      />
 
       <button
         ref={optionDisplayRef}
@@ -103,10 +112,14 @@ const InputSelect = (props: Props) => {
           setOpenOptions((prev) => !prev);
         }}
         tabIndex={0}
-        className={`${InputStyles(false)} px-0 ${focusedClasses()} ${hoverClasses()}`}
+        className={`${InputStyles(
+          false
+        )} px-0 ${focusedClasses()} ${hoverClasses()}`}
       >
         <div className="flex gap-2 justify-between items-center px-2">
-          {typeof selectedOption?.display === 'function' ? selectedOption.display() : selectedOption.display || null}
+          {typeof selectedOption?.display === "function"
+            ? selectedOption.display()
+            : selectedOption.display || null}
           <aside className="flex gap-2 justify-between items-center">
             <Keystroke id={`open-${id}`} keys={[KEYS.Enter]} size="xs" />
             <BsArrowDownCircleFill />
@@ -114,7 +127,11 @@ const InputSelect = (props: Props) => {
         </div>
       </button>
 
-      <ul className={`transition-all relative bg-gray-800 ${openOptions ? 'block' : 'hidden'} p-2 rounded-md mt-1 `}>
+      <ul
+        className={`transition-all relative bg-gray-800 ${
+          openOptions ? "block" : "hidden"
+        } p-2 rounded-md mt-1 `}
+      >
         {options.map((opt: Option) => (
           <SelectOption
             {...props}
@@ -124,6 +141,7 @@ const InputSelect = (props: Props) => {
             selectedOption={selectedOption}
             setOpenOptions={setOpenOptions}
             setSelectedOption={setSelectedOption}
+            onSelect={opt.onSelect}
           />
         ))}
       </ul>

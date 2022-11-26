@@ -26,6 +26,7 @@ import {
 import { release } from "os";
 import { join } from "path";
 import path from "path";
+import { exec } from "child_process";
 
 const SHOW_APP_SHORCUT = "Ctrl+Alt+K";
 
@@ -175,4 +176,7 @@ app.on("will-quit", () => {
 
 ipcMain.on("hide-window", (evt, arg) => {
   win.hide();
+});
+ipcMain.on("run-command", (evt, arg) => {
+  exec(`gnome-terminal --command="bash -c '${arg}; $SHELL'"`);
 });

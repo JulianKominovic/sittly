@@ -1,4 +1,4 @@
-import { focusedClasses } from '../styles';
+import { borderClasses, focusedClasses } from "../styles";
 
 const borderColor = (hasErrors: boolean) => {
   if (hasErrors) {
@@ -7,6 +7,6 @@ const borderColor = (hasErrors: boolean) => {
   return focusedClasses();
 };
 export const InputStyles = (hasErrors: boolean) =>
-  `bg-gray-800 rounded-lg leading-relaxed py-1 px-2 focus:outline-none border ${borderColor(hasErrors)} ${
-    hasErrors ? 'animate-shakeX' : ''
-  }`;
+  `bg-gray-800 rounded-lg leading-relaxed py-1 px-2 focus:outline-none border ${borderColor(
+    hasErrors
+  )} ${hasErrors ? "animate-shakeX" : ""} ${borderClasses}`;

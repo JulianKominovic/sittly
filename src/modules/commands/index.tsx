@@ -1,13 +1,13 @@
-import React from 'react';
-import { Route, Routes } from 'react-router';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Route, Routes } from "react-router";
+import { Link } from "react-router-dom";
+import CreateCommand from "./create";
 
 const Commands = () => {
   return (
-    <Routes>
-      <Route path="/Commands/edit" element={<div>Hola</div>} />
-      <Route path="/" element={<Link to="/Commands/edit">index</Link>} />
-    </Routes>
+    <>
+      <Link to="create">index</Link>
+    </>
   );
 };
 
