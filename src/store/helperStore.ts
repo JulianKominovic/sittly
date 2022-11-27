@@ -1,7 +1,8 @@
-import React from 'react';
-import create from 'zustand';
-import { Action } from '../ui/list/ListItem';
-import { FontSizeType } from '../types/fontSize';
+import React from "react";
+import create from "zustand";
+import { Action } from "../ui/list/ListItem";
+import { FontSizeType } from "../types/fontSize";
+import elementIsOnViewport from "../ui/utils/elementIsOnViewport";
 
 export type HelperAction = {
   icon: React.ReactNode;
@@ -30,18 +31,23 @@ export const useHelper = create<UseHelper>((set, get) => ({
   },
 
   showingHelperAdvise: false,
-  showHelperAdvise: () => set((prev) => ({ ...prev, showingHelperAdvise: true })),
-  hideHelperAdvise: () => set((prev) => ({ ...prev, showingHelperAdvise: false })),
+  showHelperAdvise: () =>
+    set((prev) => ({ ...prev, showingHelperAdvise: true })),
+  hideHelperAdvise: () =>
+    set((prev) => ({ ...prev, showingHelperAdvise: false })),
   elementToRefocus: null,
   showingHelper: false,
-  showHelper: (elementToRefocus: HTMLElement) => set((prev) => ({ ...prev, showingHelper: true, elementToRefocus })),
+  showHelper: (elementToRefocus: HTMLElement) =>
+    set((prev) => ({ ...prev, showingHelper: true, elementToRefocus })),
   focusLastElement: () => {
     const { elementToRefocus } = get();
-    elementToRefocus?.focus();
-    elementToRefocus?.scrollIntoView({ block: 'center' });
+    if (elementIsOnViewport(elementToRefocus)) {
+      elementToRefocus?.focus();
+      elementToRefocus?.scrollIntoView({ block: "center" });
+    }
   },
   hideHelper: () =>
     set((prev) => {
       return { ...prev, showingHelper: false };
-    })
+    }),
 }));

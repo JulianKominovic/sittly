@@ -1,12 +1,12 @@
-import React from 'react';
-import { InputStyles } from './FormElementsStyles';
-import useInput, { useInputStoreProps } from './InputStore';
-import InputTemplate from './InputTemplate';
+import React from "react";
+import { InputStyles } from "./FormElementsStyles";
+import useInput, { useInputStoreProps } from "./InputStore";
+import InputTemplate from "./InputTemplate";
 
 export type Validation = {
   validationFn: (value: string) => boolean;
   errorMessage: string;
-  severity: 'warning' | 'danger';
+  severity: "warning" | "danger";
 };
 
 type Props = {
@@ -20,10 +20,12 @@ type Props = {
 const validateInput = (
   value: string,
   validations: Validation[],
-  setError: useInputStoreProps['setError'],
-  clearError: useInputStoreProps['clearError']
+  setError: useInputStoreProps["setError"],
+  clearError: useInputStoreProps["clearError"]
 ): void => {
-  const failingValidation: undefined | Validation = validations.find((validation) => validation.validationFn(value));
+  const failingValidation: undefined | Validation = validations.find(
+    (validation) => validation.validationFn(value)
+  );
   if (failingValidation) {
     setError(failingValidation);
   } else {
@@ -37,6 +39,7 @@ const InputTextArea = (props: Props) => {
   return (
     <InputTemplate {...props} error={error}>
       <textarea
+        {...props}
         className={`${InputStyles(
           !!error
         )} scrollbar-thin scrollbar-thumb-gray-900 scrollbar-track-gray-800 scrollbar-rounded-lg focus:shadow-sm overflow-hidden resize-none`}
@@ -45,7 +48,8 @@ const InputTextArea = (props: Props) => {
         rows={cols || 4}
         onChange={(e) => {
           onChange?.(e.target.value);
-          if (validations) validateInput(e.target.value, validations, setError, clearError);
+          if (validations)
+            validateInput(e.target.value, validations, setError, clearError);
         }}
       />
     </InputTemplate>

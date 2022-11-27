@@ -11,7 +11,7 @@ export type TypeKeystroke = {
 function Keystroke({ id, keys, size = "sm", rounded }: TypeKeystroke) {
   return (
     <hgroup
-      className={`flex gap-1 items-center bg-gray-800 border border-color-opaque ${
+      className={`flex gap-1 items-center background-secondary border border-color-opaque ${
         rounded ? "rounded-full" : "rounded-md"
       } px-2 text-[12px] whitespace-nowrap`}
     >

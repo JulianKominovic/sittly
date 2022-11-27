@@ -7,77 +7,21 @@ import KeyboardHandlerComponent from "../../KeyboardHandlerComponent";
 import { Route, Routes } from "react-router-dom";
 import { useSettings } from "../../store/settingsStore";
 import Index, { INDEX } from "../index/index";
+import { PreloadTailwindClasses } from "../../ui/styles";
 
 const Wrapper = styled.div<{ colorPallette: Record<string, string> }>`
   ${({ colorPallette }) =>
-    Object.entries(colorPallette)
-      .map(([key, value]) => {
-        console.log(key, value);
-        return `
-      
-*.scrollbar-track-gray-${key} {
-  --scrollbar-track: ${value} !important;
-}
-*.scrollbar-thumb-gray-${key} {
-  --scrollbar-thumb: ${value} !important;
-}
-*.bg-gray-${key} {
-  background-color: ${value} !important;
-}
-&.bg-gray-${key} {
-  background-color: ${value} !important;
-}
-*.outline-gray-${key} {
-  outline-color: ${value} !important;
-}
-*.border-gray-${key} {
-  border-color: ${value} !important;
-}
-*.text-gray-${key} {
-  color: ${value} !important;
-}
-*.text-slate-${key} {
-  color: ${value} !important;
-}
-*.bg-slate-${key} {
-  background-color: ${value} !important;
-}
-*.outline-slate-${key} {
-  outline-color: ${value} !important;
-}
-*.border-slate-${key} {
-  border-color: ${value} !important;
-}
-*.text-slate-${key} {
-  color: ${value} !important;
-}
-*.bg-gray-${key},*.bg-gray-${key}::before,*.bg-gray-${key}::after,*.bg-gray-${key}::focus {
-  background-color: ${value} !important;
-}
-*.outline-gray-${key},*.outline-gray-${key}::before,*.outline-gray-${key}::after,*.outline-gray-${key}::focus,*.focus:after:border-gray-${key} {
-  outline-color: ${value} !important;
-}
-*.border-gray-${key},*.border-gray-${key}::before,*.border-gray-${key}::after,*.border-gray-${key}::focus {
-  border-color: ${value} !important;
-}
-*.text-gray-${key},*.text-gray-${key}::before,*.text-gray-${key}::after,*.text-gray-${key}::focus {
-  color: ${value} !important;
-}
-*.bg-slate-${key},*.bg-slate-${key}::before,*.bg-slate-${key}::after,*.bg-slate-${key}::focus {
-  background-color: ${value} !important;
-}
-*.outline-slate-${key},*.outline-slate-${key}::before,*.outline-slate-${key}::after,*.outline-slate-${key}::focus {
-  outline-color: ${value} !important;
-}
-*.border-slate-${key},*.border-slate-${key}::before,*.border-slate-${key}::after,*.border-slate-${key}::focus {
-  border-color: ${value} !important;
-}
-*.text-slate-${key},*.text-slate-${key}::before,*.text-slate-${key}::after,*.text-slate-${key}::focus {
-  color: ${value} !important;
-}
-`;
-      })
-      .join("\n")}
+    colorPallette ||
+    `--text-color-opaque: #4e4e4e;
+  --text-color-normal: #7e7e7e;
+  --text-color-light: #a7a7a7;
+  --border-color-light: #f9fafb;
+  --border-color-normal: #707070;
+  --border-color-opaque: #3d3d3d;
+  --background-color: #171717;
+  --background-secondary-color:#101010;
+  --background-footer:rgba(0,0,0,--tw-bg-opacity);
+  `}
 `;
 
 function Searchbar() {
@@ -86,7 +30,7 @@ function Searchbar() {
   return (
     <Wrapper
       colorPallette={colorPallette}
-      className="text-color-light rounded-2xl rounded-b-3xl border-2 border-color-opaque overflow-hidden bg-gray-800"
+      className="text-color-light rounded-2xl rounded-b-3xl border-2 border-color-opaque overflow-hidden background-primary"
       id="main"
     >
       <Querybar />
@@ -97,9 +41,7 @@ function Searchbar() {
           {INDEX.map((mod) => (
             <Route path={"/" + mod.module}>
               {!mod.entryPoint.onlyQuerybarFuncion &&
-                mod.entryPoint.routes.map((props) => (
-                  <Route index {...props} />
-                ))}
+                mod.entryPoint.routes.map((props) => <Route {...props} />)}
             </Route>
           ))}
         </Routes>

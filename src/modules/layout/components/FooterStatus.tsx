@@ -49,21 +49,21 @@ export const chooseRenderByStatus = (
     return (
       <StatusWrapper>
         {/* <AiOutlineLoading className="text-yellow-500 animate-spin" /> */}
-        <p className="text-yellow-500">{<StatusMessage />}</p>
+        <p className="text-yellow-800">{<StatusMessage />}</p>
       </StatusWrapper>
     );
   if (status === AsyncStatusEnum.SUCCESS)
     return (
       <StatusWrapper>
         {/* <AiOutlineCheck className="text-green-500" /> */}
-        <p className="text-green-500">{<StatusMessage />}</p>
+        <p className="text-green-800">{<StatusMessage />}</p>
       </StatusWrapper>
     );
   if (status === AsyncStatusEnum.FAIL)
     return (
       <StatusWrapper>
         {/* <AiOutlineClose className="text-red-500" /> */}
-        <p className="text-red-500">{<StatusMessage />}</p>
+        <p className="text-red-800">{<StatusMessage />}</p>
       </StatusWrapper>
     );
   return null;

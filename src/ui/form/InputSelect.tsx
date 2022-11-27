@@ -67,7 +67,7 @@ function SelectOption({
         readOnly
         tabIndex={-1}
         type="checkbox"
-        className="rounded-md appearance-none block w-2 h-2 bg-gray-800  checked:bg-yellow-500 checked:border checked:border-yellow-400"
+        className="rounded-md appearance-none block w-2 h-2 background-secondary  checked:bg-yellow-500 checked:border checked:border-yellow-400"
         checked={selectedOption.value === opt.value}
       />
       {typeof opt.display === "function" ? opt.display() : opt.display || null}
@@ -128,7 +128,7 @@ const InputSelect = (props: Props) => {
       </button>
 
       <ul
-        className={`transition-all relative bg-gray-800 ${
+        className={`transition-all relative background-secondary ${
           openOptions ? "block" : "hidden"
         } p-2 rounded-md mt-1 `}
       >

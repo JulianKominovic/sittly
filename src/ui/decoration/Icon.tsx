@@ -7,11 +7,11 @@ const renderIcon = (
   iconColor: ListItemProps["iconColor"]
 ) => {
   if (typeof icon === "string")
-    return <p className={`shadow-sm text-${iconSize}`}>{icon}</p>;
+    return <p className={`text-shadow-sm text-${iconSize}`}>{icon}</p>;
   return (
     React.cloneElement(icon, {
       className:
-        "w-9 h-9 text-color-light p-1 rounded-md text-color-opaque text-shadow-sm shadow-sm bg-gradient-to-tr from-cyan-400 to-purple-400",
+        "w-9 h-9 p-1 rounded-md text-black text-shadow-sm shadow-sm bg-gradient-to-tr from-cyan-400 to-purple-400",
     }) || null
   );
 };
@@ -26,7 +26,7 @@ const Icon = (props: IconProps) => {
   if (props.imageSrc && props.title)
     return (
       <img
-        className="text-color-light p-1 rounded-md"
+        className="text-color p-1 rounded-md text-shadow-sm"
         src={props.imageSrc}
         alt={props.title}
         width="32px"

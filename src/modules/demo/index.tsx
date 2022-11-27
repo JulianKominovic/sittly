@@ -57,7 +57,7 @@ const TestComp = () => {
       subtitle="list item again"
       icon={<BsAlarm />}
     >
-      <div className="flex items-center justify-between gap-2 mb-1 hover:bg-gray-800 hover:outline-gray-700 rounded-lg hover:outline hover:outline-1 p-2 text-sm w-full focus:outline focus:outline-1 focus:outline-gray-700 focus:border-none">
+      <div className="flex items-center justify-between gap-2 mb-1 hover:background-secondary hover:outline-gray-700 rounded-lg hover:outline hover:outline-1 p-2 text-sm w-full focus:outline focus:outline-1 focus:outline-gray-700 focus:border-none">
         <p>Flame</p>
       </div>
     </List.Item>
@@ -76,7 +76,7 @@ const TestCompX = () => (
     subtitle="list item again"
     icon={<BsAlarm />}
   >
-    <div className="flex items-center justify-between gap-2 mb-1 hover:bg-gray-800 hover:outline-gray-700 rounded-lg hover:outline hover:outline-1 p-2 text-sm w-full focus:outline focus:outline-1 focus:outline-gray-700 focus:border-none">
+    <div className="flex items-center justify-between gap-2 mb-1 hover:background-secondary hover:outline-gray-700 rounded-lg hover:outline hover:outline-1 p-2 text-sm w-full focus:outline focus:outline-1 focus:outline-gray-700 focus:border-none">
       <p>Flame</p>
     </div>
   </List.Item>

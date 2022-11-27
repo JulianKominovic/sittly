@@ -134,10 +134,15 @@ const KeyboardHandlerComponent = () => {
           break;
         case "ArrowLeft":
           if (document.activeElement?.nodeName === "INPUT") return;
+
           handleArrowPress(
-            findLeftTabStop(document.activeElement as HTMLButtonElement),
+            findLeftTabStop(
+              document.activeElement as HTMLButtonElement,
+              navigation
+            ),
             e
           );
+
           break;
 
         default:

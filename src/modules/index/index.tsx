@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { BsEmojiLaughingFill } from "react-icons/bs";
 import { IoApps } from "react-icons/io5";
 import { HiCommandLine, HiHome } from "react-icons/hi2";
-import { Route, RouteObject, RouteProps, useNavigate } from "react-router";
+import { Navigate, RouteProps, useNavigate } from "react-router";
 import { RiSettingsFill } from "react-icons/ri";
 import useQuerybar from "../../hooks/useQuerybar";
 import { KEYS } from "../../lib/keys";
@@ -17,8 +17,8 @@ import Commands from "../commands";
 import useExecCommand from "../../hooks/useExecCommand";
 import { UseStatusStore } from "../../store/statusbarStore";
 import { TailwindColors } from "../../enum/TailwindColors";
-import Routes, { RoutesProps } from "../../ui/router/Routes";
-import CreateCommand from "../commands/create";
+import CreateOrEditCommand from "../commands/create";
+import Preview from "../commands/preview";
 
 type OnlyQuerybarModuleProps = {
   querybar: {
@@ -119,7 +119,24 @@ export const INDEX: Manifest[] = [
         },
         {
           path: "create",
-          element: <CreateCommand />,
+          element: <CreateOrEditCommand />,
+        },
+        {
+          path: "edit/:id",
+          element: <CreateOrEditCommand />,
+        },
+        {
+          path: "preview/:id",
+          element: <Preview />,
+        },
+
+        {
+          path: "edit",
+          element: <Navigate to={"../"} relative="path" />,
+        },
+        {
+          path: "preview",
+          element: <Navigate to={"../"} relative="path" />,
         },
       ],
     },

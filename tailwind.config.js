@@ -3,20 +3,20 @@ const scroll = require("tailwind-scrollbar");
 
 module.exports = {
   content: ["./src/index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-  safelist: [
-    {
-      pattern: /text-.*/,
-      variants: ["after", "focus", "hover", "active"],
-    },
-    {
-      pattern: /bg-(.*)-(.*)/,
-      variants: ["after", "focus", "hover", "active"],
-    },
-    {
-      pattern: /border-(.*)-(.*)/,
-      variants: ["after", "focus", "hover", "active"],
-    },
-  ],
+  // safelist: [
+  //   {
+  //     pattern: /text-.*/,
+  //     variants: ["focus", "active"],
+  //   },
+  //   {
+  //     pattern: /bg-(.*)-(.*)/,
+  //     variants: ["focus", "active"],
+  //   },
+  //   {
+  //     pattern: /border-(.*)-(.*)/,
+  //     variants: ["focus", "active"],
+  //   },
+  // ],
   theme: {
     extend: {
       colors: {

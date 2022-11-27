@@ -79,7 +79,7 @@ function ListItem({
   return (
     <button
       {...props}
-      className={`flex items-center justify-between gap-2 mb-1 border-transparent ${focusedClasses()} ${hoverClasses()} rounded-lg p-2 text-sm w-full max-w-full active:scale-95 active:bg-gray-600 transition-transform`}
+      className={`flex items-center justify-between gap-2 mb-1 border-transparent ${focusedClasses()} ${hoverClasses()} rounded-lg p-2 text-sm w-full max-w-full active:scale-95 active:background-secondary transition-transform`}
       tabIndex={0}
       onFocus={(e) => {
         if (
@@ -115,7 +115,12 @@ function ListItem({
           keystrokeRef.current.style.display = "none";
       }}
       onKeyDown={(e) => {
-        if (e.code === "Space") {
+        if (
+          (e.code === "Space" || e.code === "Enter") &&
+          !e.ctrlKey &&
+          !e.altKey &&
+          !e.shiftKey
+        ) {
           action?.callback?.(props);
           return;
         }
@@ -125,7 +130,8 @@ function ListItem({
               k === e.code ||
               k === e.key ||
               k === e.keyCode ||
-              (k === KEYS.ControlLeft && e.ctrlKey)
+              (k === KEYS.ControlLeft && e.ctrlKey) ||
+              (k === KEYS.Enter && e.code === "Enter")
           )
         ) {
           action?.callback?.(props);
@@ -150,7 +156,7 @@ function ListItem({
           <small className="block text-left whitespace-nowrap overflow-hidden text-ellipsis max-w-[40ch] text-gray-400 text-xs">
             {firstLetterUpperCase(subtitle) || "ㅤ"}
           </small>
-          <p className="leading-3 block text text-left text-gray-200">
+          <p className="leading-3 block text text-left text-color-light">
             {firstLetterUpperCase(title)}
           </p>
         </aside>

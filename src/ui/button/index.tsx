@@ -29,7 +29,9 @@ const buildClasses = (props: Props) =>
     props.color
   }-900 focus:text-${props.color}-300 w-${props.styles?.width} h-${
     props.styles?.height
-  } bg-opacity-20 active:bg-black active:scale-95 transition-transform`;
+  } ${
+    props.styles?.margin
+  } bg-opacity-20 active:bg-black active:scale-95 transition-transform flex gap-2 justify-center items-center`;
 
 const Button = ({ variant = "outlined", ...props }: Props) => {
   if (variant === "outlined")

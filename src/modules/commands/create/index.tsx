@@ -1,16 +1,27 @@
 import React, { useState } from "react";
-import { BsArrow90DegDown, BsArrow90DegUp } from "react-icons/bs";
+import { BsArrow90DegDown, BsArrow90DegUp, BsSave } from "react-icons/bs";
+import { useNavigate, useParams } from "react-router";
+import useDatabase from "../../../hooks/useDatabase";
 import Button from "../../../ui/button";
 import Flex from "../../../ui/containers/Flex";
 import Divider from "../../../ui/decoration/Divider";
 import InputRadio from "../../../ui/form/InputRadio";
 import InputText from "../../../ui/form/InputText";
+import rescueFocusedElement from "../../../ui/utils/rescueFocusedElement";
+import Preview from "../preview";
+import { Command, CommandsStore } from "../store";
 
-enum PreConditionEnum {
+export enum PreConditionEnum {
   PREVIOUS_HAS_SUCCESS = "El comando anterior debe terminar con éxito",
   PREVIOUS_HAS_FAILED = "El comando anterior debe fallar",
   NO_PRE_CONDITION = "Sin pre-condicion (por defecto)",
 }
+
+export type CommandStep = {
+  index: number;
+  command: string;
+  preCondition: PreConditionEnum;
+};
 
 const addStep = (index: number) => ({
   index: index,
@@ -18,15 +29,39 @@ const addStep = (index: number) => ({
   preCondition: PreConditionEnum.NO_PRE_CONDITION,
 });
 
-const CreateCommand = () => {
-  const [steps, setSteps] = useState<
-    {
-      index: number;
-      command: string;
-      preCondition: PreConditionEnum;
-    }[]
-  >(() => [addStep(0)]);
+const CreateOrEditCommand = () => {
+  const { updateContent, getContent } = useDatabase<CommandsStore>();
+  const { id: commandID } = useParams();
+  const command = getContent()?.commands.find((cmd) => cmd.id === commandID);
+  const [steps, setSteps] = useState<CommandStep[]>(() =>
+    command ? command.steps : [addStep(0)]
+  );
+  const navigate = useNavigate();
+  const [title, setTitle] = useState<string>(command ? command.title : "");
+  const handleSaveToDatabase = () => {
+    const content = getContent();
+    const newItem = {
+      id: command ? command.id : crypto.randomUUID(),
+      steps,
+      title,
+      subtitle: "",
+    };
+    command
+      ? updateContent({
+          commands: content.commands.map((cmd) =>
+            cmd.id === command.id ? newItem : cmd
+          ),
+        })
+      : updateContent({
+          commands: content.commands
+            ? content.commands.concat(newItem)
+            : [newItem],
+        });
 
+    navigate("../", {
+      relative: "path",
+    });
+  };
   const handleSaveCommand = (value: string, index: number) => {
     setSteps((prev) => {
       return prev.map((step) =>
@@ -83,13 +118,31 @@ const CreateCommand = () => {
         .sort((a, b) => a.index - b.index);
     });
   };
-  console.log(steps);
+  const updatePrecondition = (index: number, condition: PreConditionEnum) =>
+    setSteps((prev) =>
+      prev.map((step) =>
+        step.index === index ? { ...step, preCondition: condition } : step
+      )
+    );
   return (
     <div>
       {steps.map((step) => {
         return (
-          <div key={step.index + "item"}>
-            <Divider label={"Paso - " + step.index} />
+          <div key={step.index + "item"} className="mb-5">
+            <Divider
+              styles={{ marginBottom: "mb-2" }}
+              label={"Configuracion"}
+            />
+            <InputText
+              onChange={setTitle}
+              id={step.index + ""}
+              label={"Titulo"}
+              value={title}
+            />
+            <Divider
+              styles={{ marginBottom: "mb-2" }}
+              label={"Paso - " + step.index}
+            />
             <InputText
               onChange={(value) => handleSaveCommand(value, step.index)}
               id={step.index + ""}
@@ -97,20 +150,36 @@ const CreateCommand = () => {
               value={step.command}
             />
             <InputRadio
+              defaultOption={0}
               id={`step${step.index}radio`}
               label="Precondicion"
               options={[
                 {
                   title: "Sin condiciones",
                   description: PreConditionEnum.NO_PRE_CONDITION,
+                  onChecked: () =>
+                    updatePrecondition(
+                      step.index,
+                      PreConditionEnum.NO_PRE_CONDITION
+                    ),
                 },
                 {
                   title: "Que falle el anterior",
                   description: PreConditionEnum.PREVIOUS_HAS_FAILED,
+                  onChecked: () =>
+                    updatePrecondition(
+                      step.index,
+                      PreConditionEnum.PREVIOUS_HAS_FAILED
+                    ),
                 },
                 {
                   title: "Que el anterior tenga éxito",
                   description: PreConditionEnum.PREVIOUS_HAS_SUCCESS,
+                  onChecked: () =>
+                    updatePrecondition(
+                      step.index,
+                      PreConditionEnum.PREVIOUS_HAS_SUCCESS
+                    ),
                 },
               ]}
             />
@@ -130,7 +199,10 @@ const CreateCommand = () => {
                 Agregar
               </Button>
               <Button
-                onClick={() => handleRemoveStep(step.index)}
+                onClick={() => {
+                  handleRemoveStep(step.index);
+                  rescueFocusedElement();
+                }}
                 styles={{
                   width: "full",
                 }}
@@ -148,8 +220,18 @@ const CreateCommand = () => {
           </div>
         );
       })}
+      <Preview steps={steps} />
+      <Button
+        styles={{
+          width: "full",
+          margin: "mt-2",
+        }}
+        onClick={handleSaveToDatabase}
+      >
+        Guardar <BsSave />
+      </Button>
     </div>
   );
 };
 
-export default CreateCommand;
+export default CreateOrEditCommand;

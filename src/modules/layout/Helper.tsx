@@ -4,14 +4,19 @@ import { useHelper } from "../../store/helperStore";
 import List from "../../ui/list";
 
 const Helper = () => {
-  const { options, showingHelper, hideHelper, focusLastElement } = useHelper(
-    (state) => ({
-      options: state.options,
-      showingHelper: state.showingHelper,
-      hideHelper: state.hideHelper,
-      focusLastElement: state.focusLastElement,
-    })
-  );
+  const {
+    options,
+    showingHelper,
+    hideHelper,
+    focusLastElement,
+    hideHelperAdvise,
+  } = useHelper((state) => ({
+    options: state.options,
+    showingHelper: state.showingHelper,
+    hideHelper: state.hideHelper,
+    focusLastElement: state.focusLastElement,
+    hideHelperAdvise: state.hideHelperAdvise,
+  }));
 
   if (!showingHelper) return null;
   return (
@@ -52,6 +57,7 @@ const Helper = () => {
                     callback: (all) => {
                       cb(all);
                       hideHelper();
+                      hideHelperAdvise();
                       focusLastElement();
                     },
                     explanation,

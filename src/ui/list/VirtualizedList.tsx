@@ -25,7 +25,7 @@ const List = ({ list }: ListProps) => {
     <Virtuoso
       react18ConcurrentRendering
       tabIndex={-1}
-      style={{ height: 246 }}
+      style={{ height: 280 }}
       className="w-full scrollbar"
       totalCount={list.length}
       data={list}

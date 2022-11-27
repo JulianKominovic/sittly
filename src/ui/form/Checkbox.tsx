@@ -43,7 +43,7 @@ const Checkbox = ({
         checked={selectedIndex || localChecked}
       />
       <div
-        className={`checkbox h-5 w-5 bg-gray-800 flex items-center justify-center ${borderClasses} ${hoverClasses()} ${focusedClasses()} ${
+        className={`checkbox h-5 w-5 background-secondary flex items-center justify-center ${borderClasses} ${hoverClasses()} ${focusedClasses()} ${
           rounded ? "rounded-full" : "rounded-md"
         }`}
       >

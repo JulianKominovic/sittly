@@ -8,20 +8,11 @@ function Navbar() {
     <nav
       className={`p-2 pb-2 flex items-center border-t border-color-opaque border-b overflow-x-auto gap-2 scrollbar-thin scrollbar-track-gray-900 scrollbar-thumb-gray-800 scrollbar-rounded-lg scrollbar`}
     >
-      {Object.values(INDEX).map(
-        ({ module, displayName, entryPoint }, index) => (
-          <>
-            {!entryPoint.onlyQuerybarFuncion && (
-              <Link
-                index={index}
-                key={module}
-                id={module}
-                title={displayName}
-              />
-            )}
-          </>
-        )
-      )}
+      {Object.values(INDEX)
+        .filter(({ entryPoint }) => !entryPoint.onlyQuerybarFuncion)
+        .map(({ module, displayName }, index) => (
+          <Link index={index} key={module} id={module} title={displayName} />
+        ))}
     </nav>
   );
 }
