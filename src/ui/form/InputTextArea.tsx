@@ -1,58 +1,36 @@
+import { TextareaProps } from "@nextui-org/react/types/textarea";
+import { Textarea, useInput } from "@nextui-org/react";
 import React from "react";
-import { InputStyles } from "./FormElementsStyles";
-import useInput, { useInputStoreProps } from "./InputStore";
-import InputTemplate from "./InputTemplate";
 
 export type Validation = {
   validationFn: (value: string) => boolean;
   errorMessage: string;
-  severity: "warning" | "danger";
+  severity: "warning" | "error";
 };
 
-type Props = {
-  label: string;
-  id: string;
-  cols?: number;
-  validations?: Validation[];
-  onChange?: (value: string) => void;
-};
+const InputTextArea = (
+  props: Partial<TextareaProps> & { validations: Validation[] }
+) => {
+  const { value, bindings } = useInput(props.initialValue ?? "");
 
-const validateInput = (
-  value: string,
-  validations: Validation[],
-  setError: useInputStoreProps["setError"],
-  clearError: useInputStoreProps["clearError"]
-): void => {
-  const failingValidation: undefined | Validation = validations.find(
-    (validation) => validation.validationFn(value)
-  );
-  if (failingValidation) {
-    setError(failingValidation);
-  } else {
-    clearError();
-  }
-};
-
-const InputTextArea = (props: Props) => {
-  const { id, validations, onChange, cols }: Props = props;
-  const { clearError, error, setError } = useInput();
+  const helper = React.useMemo(() => {
+    return props.validations?.find((validation) =>
+      validation.validationFn(value)
+    );
+  }, [value]);
   return (
-    <InputTemplate {...props} error={error}>
-      <textarea
-        {...props}
-        className={`${InputStyles(
-          !!error
-        )} scrollbar-thin scrollbar-thumb-gray-900 scrollbar-track-gray-800 scrollbar-rounded-lg focus:shadow-sm overflow-hidden resize-none`}
-        name={id}
-        id={id}
-        rows={cols || 4}
-        onChange={(e) => {
-          onChange?.(e.target.value);
-          if (validations)
-            validateInput(e.target.value, validations, setError, clearError);
-        }}
-      />
-    </InputTemplate>
+    <Textarea
+      css={{
+        mb: "$10",
+        w: "100%",
+      }}
+      {...bindings}
+      {...props}
+      status={helper?.severity ?? "default"}
+      color={helper?.severity ?? "default"}
+      helperColor={helper?.severity ?? "default"}
+      helperText={helper?.errorMessage ?? ""}
+    />
   );
 };
 

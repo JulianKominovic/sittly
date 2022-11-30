@@ -1,3 +1,4 @@
+import { Row } from "@nextui-org/react";
 import React, { useState } from "react";
 import { BsArrow90DegDown, BsArrow90DegUp, BsSave } from "react-icons/bs";
 import { useNavigate, useParams } from "react-router";
@@ -125,7 +126,7 @@ const CreateOrEditCommand = () => {
       )
     );
   return (
-    <div>
+    <>
       {steps.map((step) => {
         return (
           <div key={step.index + "item"} className="mb-5">
@@ -134,7 +135,7 @@ const CreateOrEditCommand = () => {
               label={"Configuracion"}
             />
             <InputText
-              onChange={setTitle}
+              onChange={(e) => setTitle(e.target.value)}
               id={step.index + ""}
               label={"Titulo"}
               value={title}
@@ -183,40 +184,39 @@ const CreateOrEditCommand = () => {
                 },
               ]}
             />
-            <Flex
-              styles={{
-                gap: "gap-2",
-                alignItems: "items-center",
-              }}
+            <Row
+              wrap="nowrap"
+              align="center"
+              css={{ w: "100%", m: "0", gap: 16 }}
             >
-              <Button
-                onClick={handleAddStep}
-                styles={{
-                  width: "full",
-                }}
-                color="green"
-              >
+              <Button flat onClick={handleAddStep} color="success">
                 Agregar
               </Button>
               <Button
+                flat
                 onClick={() => {
                   handleRemoveStep(step.index);
                   rescueFocusedElement();
                 }}
-                styles={{
-                  width: "full",
-                }}
-                color="red"
+                color="error"
               >
                 Eliminar
               </Button>
-              <Button onClick={() => handleMoveUp(step.index)} color="sky">
+              <Button
+                flat
+                color="secondary"
+                onClick={() => handleMoveUp(step.index)}
+              >
                 <BsArrow90DegUp />
               </Button>
-              <Button color="sky" onClick={() => handleMoveDown(step.index)}>
+              <Button
+                flat
+                color="secondary"
+                onClick={() => handleMoveDown(step.index)}
+              >
                 <BsArrow90DegDown />
               </Button>
-            </Flex>
+            </Row>
           </div>
         );
       })}
@@ -230,7 +230,7 @@ const CreateOrEditCommand = () => {
       >
         Guardar <BsSave />
       </Button>
-    </div>
+    </>
   );
 };
 

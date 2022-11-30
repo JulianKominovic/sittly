@@ -1,3 +1,4 @@
+import { Container } from "@nextui-org/react";
 import React, { useMemo } from "react";
 import { BsArrowRightShort } from "react-icons/bs";
 import { useLocation } from "react-router";
@@ -11,6 +12,7 @@ import {
   chooseRenderByStatus,
   chooseStatusGradients,
 } from "./components/FooterStatus";
+import Helper from "./Helper";
 
 const Footer = () => {
   const { options, showingHelperAdvise } = useHelper((state) => ({
@@ -45,8 +47,38 @@ const Footer = () => {
   const { pathname } = useLocation();
   const paths = pathname.split("/").filter(Boolean);
   return (
-    <footer
-      className={`background-footer bg-opacity-10 z-10 left-0 bottom-0 backdrop-blur-sm rounded-3xl rounded-t-none w-[calc(100%-2px)] px-6 py-2 h-[38px] fixed overflow-hidden flex items-center justify-between text-xs border border-color-opaque ${chooseStatusGradients(
+    <Container
+      as="footer"
+      css={{
+        bg: "$backgroundAlpha",
+        position: "absolute",
+        zIndex: "$2",
+        left: "$0",
+        bottom: "$0",
+        h: "38px",
+        justifyContent: "space-between",
+        borderBottomLeftRadius: "24px",
+        borderBottomRightRadius: "24px",
+        w: "100%",
+        maxW: "none",
+        backdropFilter: "blur(10px)",
+        display: "flex",
+        alignItems: "center",
+        overflow: "hidden",
+        "&::before": {
+          background:
+            asyncStatus !== AsyncStatusEnum.IDLE ? "$yellow500" : "transparent",
+          position: "absolute",
+          left: "$0",
+          bottom: "$0",
+          content: "",
+          zIndex: "-1",
+          w: "100%",
+          h: "100%  ",
+        },
+      }}
+      fluid
+      className={` ${chooseStatusGradients(
         asyncStatus
       )} before:w-full before:z-10 before:h-16 rounded-full before:left-0 before:top-0 before:absolute before:opacity-40 ${
         asyncStatus === AsyncStatusEnum.IN_PROGRESS
@@ -54,7 +86,15 @@ const Footer = () => {
           : ""
       }`}
     >
-      <main className="flex items-center w-2/3">
+      <Container
+        css={{
+          display: "flex",
+          alignItems: "center",
+          w: "66%",
+          mx: "0",
+          p: "0",
+        }}
+      >
         {asyncStatus !== AsyncStatusEnum.IDLE
           ? chooseRenderByStatus(asyncStatus, asyncOperations)
           : paths.map((path, index) => {
@@ -76,14 +116,10 @@ const Footer = () => {
                 </div>
               );
             })}
-      </main>
-      {options.length > 0 && showingHelperAdvise ? (
-        <aside className="flex gap-2 items-center">
-          <small className="text-xs">Más acciones/</small>
-          <Keystroke keys={[KEYS.ControlLeft, KEYS.Space]} id="helper-firing" />
-        </aside>
-      ) : null}
-    </footer>
+      </Container>
+
+      <Helper />
+    </Container>
   );
 };
 

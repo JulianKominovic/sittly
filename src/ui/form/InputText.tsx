@@ -1,57 +1,36 @@
-import React, { useCallback, useMemo } from "react";
-import { InputStyles } from "./FormElementsStyles";
-import useInput, { useInputStoreProps } from "./InputStore";
-import InputTemplate from "./InputTemplate";
+import { FormElement, Input, InputProps, useInput } from "@nextui-org/react";
+import React from "react";
 
 export type Validation = {
   validationFn: (value: string) => boolean;
   errorMessage: string;
-  severity: "warning" | "danger";
+  severity: "warning" | "error";
 };
 
-type Props = {
-  label: string;
-  id: string;
-  validations?: Validation[];
-  onChange?: (value: string) => void;
-  value: string;
-};
+const InputText = (
+  props: Partial<InputProps> & { validations?: Validation[] }
+) => {
+  const { value, bindings } = useInput(props.initialValue ?? "");
 
-const validateInput = (
-  value: string,
-  validations: Validation[],
-  setError: useInputStoreProps["setError"],
-  clearError: useInputStoreProps["clearError"]
-): void => {
-  const failingValidation: undefined | Validation = validations.find(
-    (validation) => validation.validationFn(value)
-  );
-  if (failingValidation) {
-    setError(failingValidation);
-  } else {
-    clearError();
-  }
-};
-
-const InputText = (props: Props) => {
-  const { id, validations, onChange }: Props = props;
-  const { clearError, error, setError } = useInput();
-
+  const helper = React.useMemo(() => {
+    return props.validations?.find((validation) =>
+      validation.validationFn(value)
+    );
+  }, [value]);
   return (
-    <InputTemplate {...props} error={error}>
-      <input
-        className={InputStyles(!!error)}
-        type="text"
-        name={id}
-        id={id}
-        value={props.value}
-        onChange={(e) => {
-          onChange?.(e.target.value);
-          if (validations)
-            validateInput(e.target.value, validations, setError, clearError);
-        }}
-      />
-    </InputTemplate>
+    <Input
+      type="text"
+      css={{
+        mb: "$10",
+        w: "100%",
+      }}
+      {...bindings}
+      {...props}
+      status={helper?.severity ?? "default"}
+      color={helper?.severity ?? "default"}
+      helperColor={helper?.severity ?? "default"}
+      helperText={helper?.errorMessage ?? ""}
+    />
   );
 };
 

@@ -7,7 +7,9 @@ type ListProps = {
   list: ListItemProps[];
 };
 
-const Row = (_: number, data: ListItemProps) => <ListItem {...data} />;
+const Row = (_: number, data: ListItemProps) => (
+  <ListItem {...data} css={{ mx: "$4", w: "calc(100% - ($4 * 2))" }} />
+);
 
 type VirtuosoRef = HTMLElement & {
   scrollToIndex: ({ index, align }: { index: number; align: "center" }) => void;
@@ -25,8 +27,10 @@ const List = ({ list }: ListProps) => {
     <Virtuoso
       react18ConcurrentRendering
       tabIndex={-1}
-      style={{ height: 280 }}
-      className="w-full scrollbar"
+      style={{
+        height: 300,
+        width: "100%",
+      }}
       totalCount={list.length}
       data={list}
       ref={virtuosoRef as any}

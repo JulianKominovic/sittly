@@ -1,9 +1,7 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
-
 * {
   outline: none;
+  padding: 0;
+  margin: 0;
 }
 
 body {
@@ -12,6 +10,7 @@ body {
   width: 100vw;
   font-weight: 400;
   text-rendering: optimizeLegibility;
+  background: transparent !important;
 }
 .text-shadow-sm {
   text-shadow: 0px 0px 1px rgb(36 37 47 / 80%);
@@ -23,7 +22,7 @@ body {
 }
 #root {
   border-radius: 24px;
-  background-image: linear-gradient(326deg, #060318, #000);
+  background: transparent;
 }
 #main {
   height: 100vh;
@@ -58,13 +57,21 @@ body {
 .app-loading-wrap {
   border-radius: 24px;
   background-color: rgb(0, 0, 0);
+  z-index: 999999;
 }
 
 :root {
   --animate-duration: 0.2s;
   overflow: hidden;
+  background: transparent;
 }
-.text-shadow-sm {
+@media (min-width: 650px) {
+  * {
+    max-width: none !important;
+  }
+}
+
+/* .text-shadow-sm {
   text-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
 }
 .text-color-opaque {
@@ -105,4 +112,4 @@ body {
 }
 .focusdownsidediv-border-color-opaque:focus > div {
   border-color: var(--border-color-normal) !important;
-}
+} */

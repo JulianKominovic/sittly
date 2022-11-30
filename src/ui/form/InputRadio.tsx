@@ -1,9 +1,10 @@
+import { Container, Text } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import Checkbox from "./Checkbox";
 import InputTemplate, { InputTemplateProps } from "./InputTemplate";
 
 type Props = {
-  defaultOption: number;
+  defaultOption?: number;
   options: {
     title: string;
     description: string;
@@ -12,29 +13,36 @@ type Props = {
 } & Pick<InputTemplateProps, "id" | "label">;
 
 const InputRadio = (props: Props) => {
-  const { id, options, defaultOption } = props;
+  const { id, options, defaultOption, label } = props;
   const [checked, setChecked] = useState(defaultOption ?? -1);
   return (
-    <InputTemplate {...props} error={null}>
-      <main className="flex gap-4">
-        {options.map((item, index) => {
-          const uniqueId = id + index + "opt";
-          return (
-            <Checkbox
-              key={uniqueId}
-              onChecked={item.onChecked}
-              uniqueId={uniqueId}
-              description={item.description}
-              title={item.title}
-              checked={checked}
-              setChecked={setChecked}
-              index={index}
-              rounded
-            />
-          );
-        })}
-      </main>
-    </InputTemplate>
+    <Container
+      css={{
+        display: "flex",
+        gap: "$4",
+        px: "0",
+      }}
+    >
+      <Text as="label" css={{ w: "100%" }}>
+        {label}
+      </Text>
+      {options.map((item, index) => {
+        const uniqueId = id + index + "opt";
+        return (
+          <Checkbox
+            key={uniqueId}
+            onChecked={item.onChecked}
+            uniqueId={uniqueId}
+            description={item.description}
+            title={item.title}
+            checked={checked}
+            setChecked={setChecked}
+            index={index}
+            rounded
+          />
+        );
+      })}
+    </Container>
   );
 };
 

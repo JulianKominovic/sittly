@@ -218,46 +218,38 @@ const Index = () => {
 
   return (
     <div>
-      <List.Root>
-        {memoizedIndex.map((item, index) => (
-          <List.Item
-            key={item.module + index}
-            title={item.displayName}
-            subtitle={item.description}
-            staging={{
-              nextStage: {
-                to: item.module,
-              },
-            }}
-            iconColor={item.iconColor}
-            icon={item.icon}
-            action={{
-              callback: () => {
-                if (item.entryPoint.onlyQuerybarFuncion) {
-                  item.entryPoint.querybarFunction?.({
-                    querybar: {
-                      querybarValue: value
-                        .replace(item.entryPoint.triggerWord, "")
-                        .trim(),
-                    },
-                    commands: {
-                      executeCommand,
-                      killProcess,
-                    },
-                    browser: {
-                      openLink,
-                    },
-                  });
-                } else {
-                  navigate(item.module);
-                }
-              },
-              explanation: "Ir",
-              keys: [KEYS.Enter],
-            }}
-          />
-        ))}
-      </List.Root>
+      {memoizedIndex.map((item, index) => (
+        <List.Item
+          key={item.module + index}
+          title={item.displayName}
+          subtitle={item.description}
+          iconColor={item.iconColor}
+          icon={item.icon}
+          action={{
+            callback: () => {
+              if (item.entryPoint.onlyQuerybarFuncion) {
+                item.entryPoint.querybarFunction?.({
+                  querybar: {
+                    querybarValue: value
+                      .replace(item.entryPoint.triggerWord, "")
+                      .trim(),
+                  },
+                  commands: {
+                    executeCommand,
+                  },
+                  browser: {
+                    openLink,
+                  },
+                });
+              } else {
+                navigate(item.module);
+              }
+            },
+            explanation: "Ir",
+            keys: [KEYS.Enter],
+          }}
+        />
+      ))}
     </div>
   );
 };

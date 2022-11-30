@@ -1,6 +1,7 @@
-import React from 'react';
+import "./index.css";
+import React from "react";
 
-import Router from './modules/router';
+import Router from "./modules/router";
 
 function App() {
   return <Router />;

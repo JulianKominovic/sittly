@@ -133,11 +133,12 @@ const FlexDemo = ({}: Props) => {
       <InputText
         id="test"
         label="Testing label"
+        name="test"
         validations={[
           {
             errorMessage: "Opps length",
             validationFn: (value) => value.length < 10,
-            severity: "danger",
+            severity: "error",
           },
           {
             errorMessage: "Opps cannot contain number 8",
@@ -154,7 +155,7 @@ const FlexDemo = ({}: Props) => {
           {
             errorMessage: "Opps length",
             validationFn: (value) => value.length < 10,
-            severity: "danger",
+            severity: "error",
           },
           {
             errorMessage: "Opps cannot contain number 8",
@@ -173,16 +174,15 @@ const FlexDemo = ({}: Props) => {
       <InputTextArea
         id="test"
         label="Testing label"
-        onChange={(v) => {}}
         validations={[
           {
             errorMessage: "Opps length",
-            validationFn: (value) => value.length < 10,
-            severity: "danger",
+            validationFn: (value) => value.length > 10,
+            severity: "error",
           },
           {
             errorMessage: "Opps cannot contain number 8",
-            validationFn: (value) => value.includes("8"),
+            validationFn: (value) => !value.includes("8"),
             severity: "warning",
           },
         ]}

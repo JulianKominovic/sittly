@@ -1,14 +1,15 @@
 import React, { useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+
 // import { motion } from 'framer-motion';
 import firstLetterUpperCase from "../../lib/firstLetterUpperCase";
 import { KEYS } from "../../lib/keys";
 import Keystroke from "../Keystroke";
-import { borderClasses, focusedClasses, hoverClasses } from "../styles";
+import { ButtonProps } from "@nextui-org/react";
 import { HelperAction, useHelper } from "../../store/helperStore";
 import { FontSizeType } from "../../types/fontSize";
 import Icon from "../decoration/Icon";
 import { TailwindColors } from "../../enum/TailwindColors";
+import { Button, Container, Text } from "@nextui-org/react";
 
 export type Stage = {
   to?: string;
@@ -33,6 +34,7 @@ export type ListItemProps = {
   onBlur?: (e: HTMLButtonElement) => void;
   onFocus?: (e: HTMLButtonElement) => void;
   ref?: any;
+  css?: ButtonProps["css"];
 };
 
 function ListItem({
@@ -49,101 +51,50 @@ function ListItem({
   iconColor,
   ...props
 }: ListItemProps) {
-  const location = useLocation();
   const keystrokeRef = useRef<HTMLDivElement | null>(null);
 
-  const setOptions = useHelper((state) => state.setOptions);
-  const hideHelperAdvise = useHelper((state) => state.hideHelperAdvise);
-  const showHelperAdvise = useHelper((state) => state.showHelperAdvise);
-  const showingHelperAdvise = useHelper((state) => state.showingHelperAdvise);
-  const showingHelper = useHelper((state) => state.showingHelper);
-  const showHelper = useHelper((state) => state.showHelper);
-  const hideHelper = useHelper((state) => state.hideHelper);
-
-  const handleActionKeys = (act: Action, e: KeyboardEvent) => {
-    if (
-      act.keys
-        .filter((k) => k !== KEYS.ControlLeft)
-        .every((key) => {
-          const actionUsesControl = act.keys.some(
-            (k) => k === KEYS.ControlLeft
-          );
-          if (actionUsesControl) return e.ctrlKey && key === e.key;
-          return key === e.code;
-        })
-    ) {
-      act.callback(props);
-    }
-  };
-
   return (
-    <button
+    <Button
       {...props}
-      className={`flex items-center justify-between gap-2 mb-1 border-transparent ${focusedClasses()} ${hoverClasses()} rounded-lg p-2 text-sm w-full max-w-full active:scale-95 active:background-secondary transition-transform`}
+      flat
+      css={{
+        bg: "$accents0",
+        display: "flex",
+        w: "100%",
+        my: "$4",
+        p: "$2",
+        h: "auto",
+        ">span": {
+          display: "flex",
+          w: "100%",
+        },
+        ".keys-tip": {
+          display: alwaysShowKeys ? "flex" : "none",
+        },
+        "&:focus": {
+          ".keys-tip": {
+            display: "flex",
+          },
+        },
+        ...props.css,
+      }}
       tabIndex={0}
       onFocus={(e) => {
-        if (
-          !e.currentTarget.hasAttribute("is-helper-option") &&
-          showingHelper
-        ) {
-          hideHelper();
-        }
-        if (
-          helperActions?.length > 0 &&
-          !e.currentTarget.hasAttribute("is-helper-option")
-        ) {
-          const id = setTimeout(() => {
-            setOptions(helperActions);
-            showHelperAdvise();
-            clearTimeout(id);
-          }, 1);
-        }
-
         if (keystrokeRef.current) keystrokeRef.current.style.display = "flex";
         onFocus?.(e.target);
       }}
-      onClick={(e) => {
-        if (e.ctrlKey && showingHelperAdvise) {
-          showHelper(e.currentTarget);
-          return;
-        }
-      }}
-      onBlur={(e) => {
-        hideHelperAdvise();
-        onBlur?.(e.currentTarget);
-        if (keystrokeRef.current && !alwaysShowKeys)
-          keystrokeRef.current.style.display = "none";
-      }}
-      onKeyDown={(e) => {
-        if (
-          (e.code === "Space" || e.code === "Enter") &&
-          !e.ctrlKey &&
-          !e.altKey &&
-          !e.shiftKey
-        ) {
-          action?.callback?.(props);
-          return;
-        }
-        if (
-          action?.keys.every(
-            (k) =>
-              k === e.code ||
-              k === e.key ||
-              k === e.keyCode ||
-              (k === KEYS.ControlLeft && e.ctrlKey) ||
-              (k === KEYS.Enter && e.code === "Enter")
-          )
-        ) {
-          action?.callback?.(props);
-        }
+      onPress={() => {
+        action?.callback?.(props);
       }}
     >
-      <main className="flex items-center gap-2">
-        {location.pathname.split("/").filter(Boolean).length > 1 ? (
-          <aside className="flex gap-2 items-center justify-center">
-            <Keystroke rounded id={title} keys={[KEYS.ArrowLeft]} />
-          </aside>
-        ) : null}
+      <Container
+        as="main"
+        css={{
+          display: "flex",
+          alignItems: "center",
+          px: "0",
+        }}
+      >
         <Icon
           iconColor={iconColor}
           imageSrc={imageSrc}
@@ -152,28 +103,65 @@ function ListItem({
           iconSize={iconSize}
         />
 
-        <aside>
-          <small className="block text-left whitespace-nowrap overflow-hidden text-ellipsis max-w-[40ch] text-gray-400 text-xs">
+        <Container
+          as="aside"
+          css={{
+            display: "flex",
+            alignItems: "baseline",
+            justifyContent: "flex-start",
+            justifyItems: "baseline",
+            w: "fit-content",
+            flexWrap: "nowrap",
+            mx: "$0",
+            flexDirection: "column",
+          }}
+        >
+          <Text
+            small
+            css={{
+              color: "$accents7",
+            }}
+          >
             {firstLetterUpperCase(subtitle) || "ㅤ"}
-          </small>
-          <p className="leading-3 block text text-left text-color-light">
+          </Text>
+          <Text
+            weight={"medium"}
+            css={{
+              lineHeight: "$sm",
+              color: "$accents9",
+            }}
+          >
             {firstLetterUpperCase(title)}
-          </p>
-        </aside>
-      </main>
+          </Text>
+        </Container>
+      </Container>
 
-      <div
-        ref={keystrokeRef}
-        className={`${alwaysShowKeys ? "flex" : "hidden"} gap-2`}
+      <Container
+        as="div"
+        css={{
+          p: "0",
+        }}
+        className="keys-tip"
       >
         {action ? (
-          <aside className="flex gap-2 items-center">
+          <Container
+            as="aside"
+            css={{
+              display: "flex",
+              alignItems: "center",
+              w: "fit-content",
+              flexWrap: "nowrap",
+              gap: "$2",
+              marginRight: "0",
+              px: "$4",
+            }}
+          >
             <small>{action.explanation}/</small>
             <Keystroke id={title} keys={action.keys} />{" "}
-          </aside>
+          </Container>
         ) : null}
-      </div>
-    </button>
+      </Container>
+    </Button>
   );
 }
 

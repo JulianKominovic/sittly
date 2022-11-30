@@ -1,3 +1,4 @@
+import { Container } from "@nextui-org/react";
 import React from "react";
 import { KEYS } from "../lib/keys";
 
@@ -10,28 +11,27 @@ export type TypeKeystroke = {
 
 function Keystroke({ id, keys, size = "sm", rounded }: TypeKeystroke) {
   return (
-    <hgroup
-      className={`flex gap-1 items-center background-secondary border border-color-opaque ${
-        rounded ? "rounded-full" : "rounded-md"
-      } px-2 text-[12px] whitespace-nowrap`}
+    <Container
+      css={{
+        display: "flex",
+        alignItems: "center",
+        w: "fit-content",
+        mx: "$0",
+        p: "$0",
+      }}
     >
       {keys.map((key, index) => (
-        <>
-          <div key={id + index + key}>
-            <kbd
-              id={id + index + key}
-              data-highlight-key={key}
-              className={`${
-                size === "xxs" ? "text-[12px]" : `text-${size}`
-              } font-sans`}
-            >
-              {key}
-            </kbd>
-          </div>
-          {index < keys.length - 1 ? " + " : null}
-        </>
+        <kbd
+          id={id + index + key}
+          data-highlight-key={key}
+          className={`${
+            size === "xxs" ? "text-[12px]" : `text-${size}`
+          } font-sans`}
+        >
+          {key}
+        </kbd>
       ))}
-    </hgroup>
+    </Container>
   );
 }
 

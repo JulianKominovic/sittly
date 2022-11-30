@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { BsCheck } from "react-icons/bs";
 import { GoPrimitiveDot } from "react-icons/go";
-import { borderClasses, focusedClasses, hoverClasses } from "../styles";
+import { styled } from "@nextui-org/react";
 
 type CheckboxProps = {
   uniqueId: string;
@@ -13,6 +13,34 @@ type CheckboxProps = {
   rounded?: boolean;
   index?: number;
 };
+
+const Button = styled("button", {
+  bg: "transparent",
+  display: "flex",
+  alignItems: "center",
+  gap: "$4",
+  "&:focus .roundbox": {
+    outline: "2px solid $primary",
+    outlineOffset: "2px",
+  },
+  ".roundbox": {
+    border: "1px solid $accents6",
+    borderRadius: "$squared",
+    w: "$8",
+    h: "$8",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  ".aside": {
+    display: "flex",
+    alignItems: "baseline",
+    flexDirection: "column",
+  },
+  ".rounded": {
+    borderRadius: "50%",
+  },
+});
 
 const Checkbox = ({
   uniqueId,
@@ -27,13 +55,12 @@ const Checkbox = ({
   const [localChecked, setLocalChecked] = useState(false);
   const selectedIndex = checked === index;
   return (
-    <button
+    <Button
       onClick={() => {
         onChecked?.();
         if (setChecked) setChecked(index as number);
         else setLocalChecked((prev) => !prev);
       }}
-      className="flex w-fit items-center gap-2 focusdownsidediv-border-color-opaque"
     >
       <input
         type="checkbox"
@@ -42,11 +69,7 @@ const Checkbox = ({
         hidden
         checked={selectedIndex || localChecked}
       />
-      <div
-        className={`checkbox h-5 w-5 background-secondary flex items-center justify-center ${borderClasses} ${hoverClasses()} ${focusedClasses()} ${
-          rounded ? "rounded-full" : "rounded-md"
-        }`}
-      >
+      <div className={`roundbox ${rounded ? "rounded" : ""}`}>
         {(() => {
           if (rounded) {
             if (selectedIndex) return <GoPrimitiveDot />;
@@ -57,11 +80,11 @@ const Checkbox = ({
         })()}
       </div>
 
-      <aside className="flex flex-col justify-start items-start">
-        <small className="text-color-normal">{description}</small>
+      <aside className="aside">
+        <small>{description}</small>
         <label htmlFor={uniqueId}>{title}</label>
       </aside>
-    </button>
+    </Button>
   );
 };
 export default Checkbox;

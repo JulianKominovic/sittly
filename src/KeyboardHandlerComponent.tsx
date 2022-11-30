@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { TailwindColors } from "./enum/TailwindColors";
+import { KEYS } from "./lib/keys";
 import {
   findLeftTabStop,
   findNextTabStop,
@@ -14,7 +15,9 @@ const { ipcRenderer } = require("electron");
 const KeyboardHandlerComponent = () => {
   const navigation = useNavigate();
   const location = useLocation();
-  const hideHelper = useHelper((state) => state.hideHelper);
+  const setHelperOpen = useHelper((state) => state.setHelperOpen);
+  const setHelperOptions = useHelper((state) => state.setOptions);
+
   const asyncStatus = useStatusStore((state) => state.asyncStatus);
   useEffect(() => {
     switch (asyncStatus) {
@@ -68,7 +71,8 @@ const KeyboardHandlerComponent = () => {
         notArrows &&
         e.key !== "Enter" &&
         e.code !== "Space" &&
-        !e.ctrlKey
+        !e.ctrlKey &&
+        !e.altKey
       ) {
         document.querySelector("#query-bar")?.focus();
       }
@@ -89,7 +93,6 @@ const KeyboardHandlerComponent = () => {
       e: KeyboardEvent
     ) => {
       e.preventDefault();
-
       if (elementFound) {
         elementFound.focus();
         elementFound.scrollIntoView({ block: "center" });
@@ -106,7 +109,6 @@ const KeyboardHandlerComponent = () => {
 
         return;
       }
-
       if (e.key === "f" && e.ctrlKey) {
         e.preventDefault();
         document.querySelector("#query-bar")?.focus();
@@ -146,8 +148,10 @@ const KeyboardHandlerComponent = () => {
           break;
 
         default:
-          if (e.ctrlKey || e.key === "Enter") return;
-          hideHelper();
+          if (e.ctrlKey && e.code === "KeyO") {
+            setHelperOpen(true);
+          }
+
           break;
       }
     };
@@ -169,20 +173,14 @@ const KeyboardHandlerComponent = () => {
       }
     };
     window.addEventListener("keydown", handleExit);
+
+    setHelperOptions([]);
     return () => {
       window.removeEventListener("keydown", handleExit);
     };
   }, [location.pathname]);
 
-  return (
-    <div
-      className={`text-lg text-xl text-2xl text-3xl text-4xl text-5xl text-6xl text-7xl ${Object.keys(
-        TailwindColors
-      )
-        .map((k) => `bg-gradient-to-tr from-${k}-400 to-${k}-600`)
-        .join(" ")}`}
-    />
-  );
+  return <div />;
 };
 
 export default KeyboardHandlerComponent;

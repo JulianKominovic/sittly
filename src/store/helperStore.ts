@@ -1,53 +1,32 @@
+import { DropdownItemBaseProps } from "@nextui-org/react/types/dropdown/base/dropdown-item-base";
 import React from "react";
 import create from "zustand";
-import { Action } from "../ui/list/ListItem";
-import { FontSizeType } from "../types/fontSize";
-import elementIsOnViewport from "../ui/utils/elementIsOnViewport";
 
 export type HelperAction = {
-  icon: React.ReactNode;
-  subtitle: string;
   title: string;
-  iconSize: FontSizeType;
-} & Action;
+  items: (DropdownItemBaseProps<object> & {
+    onClick: () => void;
+    key: string;
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+    children?: React.ReactNode | undefined;
+  })[];
+}[];
 
 type UseHelper = {
-  options: HelperAction[];
-  setOptions: (options: HelperAction[]) => void;
-  elementToRefocus: HTMLElement | null;
-  showingHelper: boolean;
-  showHelper: (elementToRefocus: HTMLElement) => void;
-  hideHelper: () => void;
-  showingHelperAdvise: boolean;
-  showHelperAdvise: () => void;
-  hideHelperAdvise: () => void;
-  focusLastElement: () => void;
+  options: HelperAction;
+  setOptions: (options: HelperAction) => void;
+
+  isHelperOpen: boolean;
+  setHelperOpen: (state: boolean) => void;
 };
 
 export const useHelper = create<UseHelper>((set, get) => ({
   options: [],
-  setOptions: (options: HelperAction[]) => {
+  setOptions: (options: HelperAction) => {
     set((prev) => ({ ...prev, options }));
   },
-
-  showingHelperAdvise: false,
-  showHelperAdvise: () =>
-    set((prev) => ({ ...prev, showingHelperAdvise: true })),
-  hideHelperAdvise: () =>
-    set((prev) => ({ ...prev, showingHelperAdvise: false })),
-  elementToRefocus: null,
-  showingHelper: false,
-  showHelper: (elementToRefocus: HTMLElement) =>
-    set((prev) => ({ ...prev, showingHelper: true, elementToRefocus })),
-  focusLastElement: () => {
-    const { elementToRefocus } = get();
-    if (elementIsOnViewport(elementToRefocus)) {
-      elementToRefocus?.focus();
-      elementToRefocus?.scrollIntoView({ block: "center" });
-    }
-  },
-  hideHelper: () =>
-    set((prev) => {
-      return { ...prev, showingHelper: false };
-    }),
+  isHelperOpen: false,
+  setHelperOpen: (state) => set((prev) => ({ ...prev, isHelperOpen: state })),
 }));

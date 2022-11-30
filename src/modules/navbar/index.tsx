@@ -1,19 +1,39 @@
+import { Container } from "@nextui-org/react";
 import React from "react";
-import { focusedClasses, hoverClasses } from "../../ui/styles";
 import { INDEX } from "../index";
 import Link from "./components/Link";
 
 function Navbar() {
   return (
-    <nav
-      className={`p-2 pb-2 flex items-center border-t border-color-opaque border-b overflow-x-auto gap-2 scrollbar-thin scrollbar-track-gray-900 scrollbar-thumb-gray-800 scrollbar-rounded-lg scrollbar`}
+    <Container
+      as="nav"
+      fluid
+      css={{
+        maxW: "none",
+        px: "$6",
+        display: "flex",
+        ".navlink": {
+          display: "flex",
+          w: "fit-content",
+          py: "$2",
+          px: "$4",
+          borderRadius: "$xs",
+        },
+        ".active-navlink": {
+          background: "$accents0",
+        },
+        ".inactive-navlink": {
+          background: "transparent",
+          color: "$accents5",
+        },
+      }}
     >
       {Object.values(INDEX)
         .filter(({ entryPoint }) => !entryPoint.onlyQuerybarFuncion)
         .map(({ module, displayName }, index) => (
           <Link index={index} key={module} id={module} title={displayName} />
         ))}
-    </nav>
+    </Container>
   );
 }
 
