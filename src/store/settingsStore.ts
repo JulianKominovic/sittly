@@ -7,7 +7,6 @@ type UseSettings = {
 
 export const useSettings = create<UseSettings>((set) => {
   const storage = localStorage.getItem("Setting");
-  console.log(storage);
   return {
     colorPallette: storage ? JSON.parse(storage).theme : "",
     setColorPallette: (value: string) =>

@@ -20,12 +20,18 @@ const InputTextArea = (
   }, [value]);
   return (
     <Textarea
-      css={{
-        mb: "$10",
-        w: "100%",
-      }}
       {...bindings}
       {...props}
+      css={{
+        m: "0",
+        mb: "$10",
+        w: "100%",
+        textarea: {
+          m: "0!important",
+          p: "$4",
+        },
+        ...props.css,
+      }}
       status={helper?.severity ?? "default"}
       color={helper?.severity ?? "default"}
       helperColor={helper?.severity ?? "default"}

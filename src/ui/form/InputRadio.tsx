@@ -19,6 +19,7 @@ const InputRadio = (props: Props) => {
     <Container
       css={{
         display: "flex",
+        flexDirection: "column",
         gap: "$4",
         px: "0",
       }}

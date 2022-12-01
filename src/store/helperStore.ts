@@ -1,6 +1,7 @@
 import { DropdownItemBaseProps } from "@nextui-org/react/types/dropdown/base/dropdown-item-base";
 import React from "react";
 import create from "zustand";
+import { KeyCodes } from "../types/KeyCodes";
 
 export type HelperAction = {
   title: string;
@@ -11,6 +12,7 @@ export type HelperAction = {
     description: string;
     icon: React.ReactNode;
     children?: React.ReactNode | undefined;
+    keyboardShorcut?: KeyCodes[];
   })[];
 }[];
 

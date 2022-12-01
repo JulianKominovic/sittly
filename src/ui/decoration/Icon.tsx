@@ -17,12 +17,12 @@ const Icon = (props: IconProps) => {
       icon={props.icon}
       size="md"
       css={{
-        fontSize: "$lg",
+        fontSize: "$2xl",
       }}
       squared
       bordered
-      width="32px"
-      height="32px"
+      width="40px"
+      height="40px"
       loading="lazy"
     />
   );

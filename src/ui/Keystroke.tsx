@@ -1,4 +1,4 @@
-import { Container } from "@nextui-org/react";
+import { Container, styled } from "@nextui-org/react";
 import React from "react";
 import { KEYS } from "../lib/keys";
 
@@ -9,6 +9,10 @@ export type TypeKeystroke = {
   rounded?: boolean;
 };
 
+const KBD = styled("kbd", {
+  borderBlockEnd: "2px solid $accents5",
+});
+
 function Keystroke({ id, keys, size = "sm", rounded }: TypeKeystroke) {
   return (
     <Container
@@ -16,20 +20,14 @@ function Keystroke({ id, keys, size = "sm", rounded }: TypeKeystroke) {
         display: "flex",
         alignItems: "center",
         w: "fit-content",
-        mx: "$0",
+        mx: "$2",
         p: "$0",
       }}
     >
       {keys.map((key, index) => (
-        <kbd
-          id={id + index + key}
-          data-highlight-key={key}
-          className={`${
-            size === "xxs" ? "text-[12px]" : `text-${size}`
-          } font-sans`}
-        >
+        <KBD id={id + index + key} data-highlight-key={key}>
           {key}
-        </kbd>
+        </KBD>
       ))}
     </Container>
   );

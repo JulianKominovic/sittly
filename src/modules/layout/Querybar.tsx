@@ -5,14 +5,24 @@ import Keystroke from "../../ui/Keystroke";
 import { useLocation } from "react-router";
 import { INDEX } from "../index";
 import { Avatar, Container, Input } from "@nextui-org/react";
+import InputText from "../../ui/form/InputText";
 
 const Querybar = () => {
   const { placeholder, setValue, value } = useQuerybar();
   const searchbar = useRef<HTMLInputElement>(null);
   const location = useLocation();
+
   const icon = useMemo(() => {
-    return INDEX.find(({ module: mod }) => mod === location.pathname.slice(1))
-      ?.icon;
+    return INDEX.find(
+      ({ module: mod }) =>
+        mod ===
+        location.pathname.slice(
+          1,
+          location.pathname.indexOf("/", 1) === -1
+            ? undefined
+            : location.pathname.indexOf("/", 1)
+        )
+    )?.icon;
   }, [location.pathname]);
   useEffect(() => {
     searchbar.current?.focus();
@@ -44,7 +54,7 @@ const Querybar = () => {
       >
         <Avatar squared icon={icon} />
 
-        <Input
+        <InputText
           tabIndex={-1}
           id="query-bar"
           ref={searchbar}
@@ -52,10 +62,15 @@ const Querybar = () => {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           css={{
-            w: "320px",
+            w: "300px",
+            my: "0",
+            mx: "$4",
+            input: {
+              fontSize: "$md",
+              m: "0",
+            },
           }}
           placeholder={placeholder}
-          data-navegable="true"
         />
       </Container>
       <Container

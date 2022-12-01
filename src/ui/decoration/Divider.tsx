@@ -10,16 +10,18 @@ type Props = {
 };
 
 const DividerStyled = styled("div", {
-  "::after": {
-    border: "1px solid $accents2",
+  "&::after": {
+    border: "1px solid $accents3",
     content: "",
     w: "100%",
+    mx: "$8",
     display: "block",
     h: "1px",
   },
   w: "100%",
   pr: "8",
   d: "flex",
+  color: "$accents6",
   alignItems: "center",
   whiteSpace: "pre",
 });

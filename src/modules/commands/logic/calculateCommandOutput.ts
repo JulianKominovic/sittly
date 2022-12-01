@@ -3,7 +3,6 @@ import { CommandStep, PreConditionEnum } from "../create";
 export default (steps: CommandStep[]) => {
   return steps
     .map((step) => {
-      console.log(step);
       let condition = "; ";
       if (step.preCondition === PreConditionEnum.PREVIOUS_HAS_FAILED)
         condition = " || ";

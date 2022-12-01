@@ -14,8 +14,9 @@ const FooterBreadcumbItem = ({ to, label, isFirstItem }: Props) => {
 
   return (
     <Link
-      className="inline-flex items-center hover:text-color-normal"
+      className="link-footer"
       to={isFirstItem ? `/${moduleMatching?.module}` : to}
+      tabIndex={-1}
     >
       {moduleMatching?.icon
         ? React.cloneElement(moduleMatching?.icon, {

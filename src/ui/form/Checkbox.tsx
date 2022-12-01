@@ -40,6 +40,9 @@ const Button = styled("button", {
   ".rounded": {
     borderRadius: "50%",
   },
+  small: {
+    color: "$accents6",
+  },
 });
 
 const Checkbox = ({

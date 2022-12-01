@@ -1,16 +1,17 @@
-import { Row } from "@nextui-org/react";
-import React, { useState } from "react";
+import { Col, Row, Text } from "@nextui-org/react";
+import React, { useEffect, useState } from "react";
 import { BsArrow90DegDown, BsArrow90DegUp, BsSave } from "react-icons/bs";
+import { VscPreview } from "react-icons/vsc";
 import { useNavigate, useParams } from "react-router";
 import useDatabase from "../../../hooks/useDatabase";
+import useHelper from "../../../hooks/useHelper";
 import Button from "../../../ui/button";
-import Flex from "../../../ui/containers/Flex";
 import Divider from "../../../ui/decoration/Divider";
 import InputRadio from "../../../ui/form/InputRadio";
 import InputText from "../../../ui/form/InputText";
-import rescueFocusedElement from "../../../ui/utils/rescueFocusedElement";
+import useRunCommand from "../hooks/useRunCommand";
 import Preview from "../preview";
-import { Command, CommandsStore } from "../store";
+import { CommandsStore } from "../store";
 
 export enum PreConditionEnum {
   PREVIOUS_HAS_SUCCESS = "El comando anterior debe terminar con éxito",
@@ -38,7 +39,45 @@ const CreateOrEditCommand = () => {
     command ? command.steps : [addStep(0)]
   );
   const navigate = useNavigate();
-  const [title, setTitle] = useState<string>(command ? command.title : "");
+  const [title, setTitle] = useState<string>(() =>
+    command ? command.title : ""
+  );
+  const [icon, setIcon] = useState<string>(() => (command ? command.icon : ""));
+
+  const { calculatedCommandOutput, testCommand } = useRunCommand({
+    externalSteps: steps,
+  });
+
+  const { setHelperOptions } = useHelper(null);
+
+  setHelperOptions([
+    {
+      title: "Acciones",
+      items: [
+        {
+          title: "Guardar comando",
+          key: "save",
+          color: "success",
+          textColor: "success",
+          description: "Guardar los cambios",
+          icon: <BsSave />,
+          onClick: () => handleSaveToDatabase(),
+          children: <></>,
+        },
+        {
+          title: "Ejecutar comando",
+          key: "execute",
+          color: "primary",
+          textColor: "primary",
+          description: "Ejecutar el código",
+          icon: <VscPreview />,
+          onClick: () => testCommand(),
+          children: <></>,
+        },
+      ],
+    },
+  ]);
+
   const handleSaveToDatabase = () => {
     const content = getContent();
     const newItem = {
@@ -46,6 +85,7 @@ const CreateOrEditCommand = () => {
       steps,
       title,
       subtitle: "",
+      icon,
     };
     command
       ? updateContent({
@@ -125,112 +165,140 @@ const CreateOrEditCommand = () => {
         step.index === index ? { ...step, preCondition: condition } : step
       )
     );
+
   return (
-    <>
-      {steps.map((step) => {
-        return (
-          <div key={step.index + "item"} className="mb-5">
-            <Divider
-              styles={{ marginBottom: "mb-2" }}
-              label={"Configuracion"}
-            />
-            <InputText
-              onChange={(e) => setTitle(e.target.value)}
-              id={step.index + ""}
-              label={"Titulo"}
-              value={title}
-            />
-            <Divider
-              styles={{ marginBottom: "mb-2" }}
-              label={"Paso - " + step.index}
-            />
-            <InputText
-              onChange={(value) => handleSaveCommand(value, step.index)}
-              id={step.index + ""}
-              label={"Comando"}
-              value={step.command}
-            />
-            <InputRadio
-              defaultOption={0}
-              id={`step${step.index}radio`}
-              label="Precondicion"
-              options={[
-                {
-                  title: "Sin condiciones",
-                  description: PreConditionEnum.NO_PRE_CONDITION,
-                  onChecked: () =>
-                    updatePrecondition(
-                      step.index,
-                      PreConditionEnum.NO_PRE_CONDITION
-                    ),
-                },
-                {
-                  title: "Que falle el anterior",
-                  description: PreConditionEnum.PREVIOUS_HAS_FAILED,
-                  onChecked: () =>
-                    updatePrecondition(
-                      step.index,
-                      PreConditionEnum.PREVIOUS_HAS_FAILED
-                    ),
-                },
-                {
-                  title: "Que el anterior tenga éxito",
-                  description: PreConditionEnum.PREVIOUS_HAS_SUCCESS,
-                  onChecked: () =>
-                    updatePrecondition(
-                      step.index,
-                      PreConditionEnum.PREVIOUS_HAS_SUCCESS
-                    ),
-                },
-              ]}
-            />
-            <Row
-              wrap="nowrap"
-              align="center"
-              css={{ w: "100%", m: "0", gap: 16 }}
-            >
-              <Button flat onClick={handleAddStep} color="success">
-                Agregar
-              </Button>
-              <Button
-                flat
-                onClick={() => {
-                  handleRemoveStep(step.index);
-                  rescueFocusedElement();
-                }}
-                color="error"
+    <Row
+      css={{
+        mx: "0",
+        gap: "$6",
+      }}
+    >
+      <Col>
+        <Text h4>Configuracion</Text>{" "}
+        <InputText
+          onChange={(e) => {
+            setIcon(e.target.value);
+          }}
+          label={"Icon"}
+          validations={[
+            {
+              severity: "error",
+              errorMessage: "Solo puede ser un ícono o 2 letras",
+              validationFn: (value = "") => {
+                console.log(value.length);
+                return value.length > 2;
+              },
+            },
+          ]}
+          value={icon}
+        />
+        <InputText
+          onChange={(e) => setTitle(e.target.value)}
+          label={"Titulo"}
+          value={title}
+        />
+        {steps.map((step) => {
+          return (
+            <div key={step.index + "item"} className="mb-5">
+              <Divider
+                styles={{ marginBottom: 16 }}
+                label={"Paso - " + step.index}
+              />
+              <InputText
+                onChange={(e) => handleSaveCommand(e.target.value, step.index)}
+                id={step.index + ""}
+                label={"Comando"}
+                value={step.command}
+                css={{ m: "0" }}
+              />
+              <InputRadio
+                defaultOption={0}
+                id={`step${step.index}radio`}
+                label="Precondicion"
+                options={[
+                  {
+                    title: "Sin condiciones",
+                    description: PreConditionEnum.NO_PRE_CONDITION,
+                    onChecked: () =>
+                      updatePrecondition(
+                        step.index,
+                        PreConditionEnum.NO_PRE_CONDITION
+                      ),
+                  },
+                  {
+                    title: "Que falle el anterior",
+                    description: PreConditionEnum.PREVIOUS_HAS_FAILED,
+                    onChecked: () =>
+                      updatePrecondition(
+                        step.index,
+                        PreConditionEnum.PREVIOUS_HAS_FAILED
+                      ),
+                  },
+                  {
+                    title: "Que el anterior tenga éxito",
+                    description: PreConditionEnum.PREVIOUS_HAS_SUCCESS,
+                    onChecked: () =>
+                      updatePrecondition(
+                        step.index,
+                        PreConditionEnum.PREVIOUS_HAS_SUCCESS
+                      ),
+                  },
+                ]}
+              />
+              <Row
+                wrap="nowrap"
+                align="center"
+                css={{ w: "100%", m: "0", gap: 16 }}
               >
-                Eliminar
-              </Button>
-              <Button
-                flat
-                color="secondary"
-                onClick={() => handleMoveUp(step.index)}
-              >
-                <BsArrow90DegUp />
-              </Button>
-              <Button
-                flat
-                color="secondary"
-                onClick={() => handleMoveDown(step.index)}
-              >
-                <BsArrow90DegDown />
-              </Button>
-            </Row>
-          </div>
-        );
-      })}
-      <Preview steps={steps} />
-      <Button
-        styles={{
-          width: "full",
-          margin: "mt-2",
+                <Button
+                  flat
+                  css={{ width: "25%", my: "$8", minWidth: "unset" }}
+                  onClick={handleAddStep}
+                  color="success"
+                >
+                  Agregar
+                </Button>
+                <Button
+                  flat
+                  css={{ width: "25%", my: "$8", minWidth: "unset" }}
+                  onClick={() => {
+                    handleRemoveStep(step.index);
+                  }}
+                  color="error"
+                >
+                  Eliminar
+                </Button>
+                <Button
+                  flat
+                  css={{ width: "25%", my: "$8", minWidth: "unset" }}
+                  color="secondary"
+                  onClick={() => handleMoveUp(step.index)}
+                >
+                  <BsArrow90DegUp />
+                </Button>
+                <Button
+                  flat
+                  css={{ width: "25%", my: "$8", minWidth: "unset" }}
+                  color="secondary"
+                  onClick={() => handleMoveDown(step.index)}
+                >
+                  <BsArrow90DegDown />
+                </Button>
+              </Row>
+            </div>
+          );
+        })}
+      </Col>
+      <Col
+        css={{
+          position: "sticky",
+          top: "0",
         }}
-        onClick={handleSaveToDatabase}
       >
-        Guardar <BsSave />
-      </Button>
-    </>
+        <Text h4>Preview</Text>
+        <Preview calculatedCommandOutput={calculatedCommandOutput} />
+      </Col>
+    </Row>
   );
 };
 

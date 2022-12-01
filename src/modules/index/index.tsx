@@ -19,6 +19,7 @@ import { UseStatusStore } from "../../store/statusbarStore";
 import { TailwindColors } from "../../enum/TailwindColors";
 import CreateOrEditCommand from "../commands/create";
 import Preview from "../commands/preview";
+import PreviewIndex from "../commands/preview/PreviewIndex";
 
 type OnlyQuerybarModuleProps = {
   querybar: {
@@ -127,7 +128,7 @@ export const INDEX: Manifest[] = [
         },
         {
           path: "preview/:id",
-          element: <Preview />,
+          element: <PreviewIndex />,
         },
 
         {

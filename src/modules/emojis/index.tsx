@@ -5,6 +5,7 @@ import useQuerybar from "../../hooks/useQuerybar";
 import { KEYS } from "../../lib/keys";
 import { ListItemProps } from "../../ui/list/ListItem";
 import VirtualizedList from "../../ui/list/VirtualizedList";
+import useHelper from "../../hooks/useHelper";
 const emoji = import("unicode-emoji");
 
 const EMOJIS = (await emoji).getEmojis();
@@ -12,6 +13,7 @@ const EMOJIS = (await emoji).getEmojis();
 const Emojis = () => {
   const { write } = useClipboard();
   const { value } = useQuerybar();
+  const { setHelperOptions } = useHelper();
 
   const memoizedEmojis = useMemo(() => {
     if (!value)
@@ -27,23 +29,29 @@ const Emojis = () => {
   return (
     <VirtualizedList
       list={memoizedEmojis.map(({ obj: item }) => {
-        const helperActions: ListItemProps["helperActions"] | undefined =
-          item.variations?.map((variation) => ({
-            icon: variation.emoji,
-            callback: () => {
-              write(variation.emoji);
-            },
-            iconSize: "3xl",
-            explanation: "Copiar",
-            keys: [KEYS.Space],
-            subtitle: "Copiar este emoji",
-            title: variation.description,
-          }));
         return {
           title: item.description,
           subtitle: item.category,
           icon: item.emoji,
           iconSize: "3xl",
+          onFocus() {
+            if (item.variations)
+              setHelperOptions([
+                {
+                  title: "Variantes",
+                  items: item.variations.map((emoji) => ({
+                    icon: emoji.emoji,
+                    key: emoji.description,
+                    description: emoji.description,
+                    children: <></>,
+                    title: "Copiar emoji",
+                    onClick: () => {
+                      write(emoji.emoji);
+                    },
+                  })),
+                },
+              ]);
+          },
           action: {
             callback() {
               write(item.emoji);
@@ -51,7 +59,6 @@ const Emojis = () => {
             explanation: "Copiar",
             keys: [KEYS.ControlLeft, KEYS.keyC],
           },
-          helperActions,
         };
       })}
     />

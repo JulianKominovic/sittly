@@ -15,6 +15,7 @@ export function findNextTabStop(el: HTMLButtonElement) {
     if (found && rightCandidate) return found;
     i++;
   }
+
   return null;
 }
 export function findPrevTabStop(el: HTMLButtonElement) {

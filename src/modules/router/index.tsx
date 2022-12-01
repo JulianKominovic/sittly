@@ -12,7 +12,6 @@ import { Container } from "@nextui-org/react";
 
 function Searchbar() {
   const colorPallette = useSettings((state) => state.colorPallette);
-  console.log(colorPallette);
   return (
     <Container
       colorPallette={colorPallette}

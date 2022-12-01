@@ -17,14 +17,16 @@ function Navbar() {
           w: "fit-content",
           py: "$2",
           px: "$4",
-          borderRadius: "$xs",
+          borderRadius: "$md",
         },
         ".active-navlink": {
           background: "$accents0",
+          fontSize: "$md",
         },
         ".inactive-navlink": {
           background: "transparent",
           color: "$accents5",
+          fontSize: "$md",
         },
       }}
     >

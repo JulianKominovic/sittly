@@ -12,7 +12,6 @@ function findNextTabStop() {
 export default () => {
   const id = setTimeout(() => {
     const element = findNextTabStop();
-    console.log(element);
     element?.focus();
     element?.scrollIntoView({ block: "center", inline: "center" });
     clearTimeout(id);

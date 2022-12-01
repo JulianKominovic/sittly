@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import "animate.css";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
-import { NextUIProvider } from "@nextui-org/react";
+import { createTheme, NextUIProvider } from "@nextui-org/react";
 
 import { globalCss } from "@nextui-org/react";
 
@@ -24,13 +24,11 @@ const globalStyles = globalCss({
     borderRadius: 10,
   },
 });
-ReactDOM.render(
-  <NextUIProvider>
-    <BrowserRouter>
-      {globalStyles()}
-      <App />
-    </BrowserRouter>
-  </NextUIProvider>,
 
+ReactDOM.render(
+  <BrowserRouter>
+    {globalStyles()}
+    <App />
+  </BrowserRouter>,
   document.getElementById("root")
 );

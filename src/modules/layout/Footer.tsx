@@ -3,22 +3,12 @@ import React, { useMemo } from "react";
 import { BsArrowRightShort } from "react-icons/bs";
 import { useLocation } from "react-router";
 import firstLetterUpperCase from "../../lib/firstLetterUpperCase";
-import { KEYS } from "../../lib/keys";
-import { useHelper } from "../../store/helperStore";
 import { AsyncStatusEnum, useStatusStore } from "../../store/statusbarStore";
-import Keystroke from "../../ui/Keystroke";
 import FooterBreadcumbItem from "./components/FooterBreadcumbItem";
-import {
-  chooseRenderByStatus,
-  chooseStatusGradients,
-} from "./components/FooterStatus";
+import { chooseRenderByStatus } from "./components/FooterStatus";
 import Helper from "./Helper";
 
 const Footer = () => {
-  const { options, showingHelperAdvise } = useHelper((state) => ({
-    options: state.options,
-    showingHelperAdvise: state.showingHelperAdvise,
-  }));
   const asyncOperations = useStatusStore((state) => state.asyncOperations);
   const asyncStatus = useMemo(() => {
     if (asyncOperations.length === 0) return AsyncStatusEnum.IDLE;
@@ -67,24 +57,43 @@ const Footer = () => {
         overflow: "hidden",
         "&::before": {
           background:
-            asyncStatus !== AsyncStatusEnum.IDLE ? "$yellow500" : "transparent",
+            asyncStatus === AsyncStatusEnum.SUCCESS
+              ? "linear-gradient(90deg,transparent,transparent, rgba(111, 255, 0, 0.2), transparent)"
+              : asyncStatus === AsyncStatusEnum.FAIL
+              ? "linear-gradient(90deg,transparent,transparent, rgba(255, 0, 0, 0.2), transparent)"
+              : asyncStatus === AsyncStatusEnum.IN_PROGRESS
+              ? "linear-gradient(90deg, transparent,transparent,rgba(255, 183, 0, 0.2), transparent)"
+              : "$backgroundAlpha",
+          backgroundSize: "200% 100%",
+          animation:
+            asyncStatus !== AsyncStatusEnum.IDLE
+              ? "gradient 2s infinite"
+              : "none",
           position: "absolute",
           left: "$0",
           bottom: "$0",
           content: "",
           zIndex: "-1",
           w: "100%",
-          h: "100%  ",
+          h: "100%",
+        },
+        ".link-footer": {
+          color: "$accents9",
+          alignItems: "center",
+          display: "flex",
+          gap: "$4",
+          fontSize: "$sm",
+          userSelect: "none",
+          pointerEvents: "none",
+        },
+        ".footer-links-steps": {
+          alignItems: "center",
+          display: "flex",
+          gap: "$4",
+          fontSize: "$sm",
         },
       }}
       fluid
-      className={` ${chooseStatusGradients(
-        asyncStatus
-      )} before:w-full before:z-10 before:h-16 rounded-full before:left-0 before:top-0 before:absolute before:opacity-40 ${
-        asyncStatus === AsyncStatusEnum.IN_PROGRESS
-          ? "before:animate-bounce before:ease-in-out"
-          : ""
-      }`}
     >
       <Container
         css={{
@@ -100,7 +109,7 @@ const Footer = () => {
           : paths.map((path, index) => {
               const isTheLastItem = index === paths.length - 1;
               return (
-                <div key={"footer" + index} className="flex items-center">
+                <div key={"footer" + index} className="footer-links-steps">
                   <FooterBreadcumbItem
                     to={
                       index === 1

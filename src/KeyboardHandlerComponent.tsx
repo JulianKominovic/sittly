@@ -174,12 +174,14 @@ const KeyboardHandlerComponent = () => {
     };
     window.addEventListener("keydown", handleExit);
 
-    setHelperOptions([]);
     return () => {
       window.removeEventListener("keydown", handleExit);
     };
   }, [location.pathname]);
 
+  // useEffect(() => {
+  //   setHelperOptions([]);
+  // }, [window.location.href]);
   return <div />;
 };
 

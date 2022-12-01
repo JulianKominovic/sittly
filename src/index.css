@@ -71,6 +71,26 @@ body {
   }
 }
 
+@keyframes gradient {
+  0% {
+    background-position: 0% 0%;
+  }
+
+  100% {
+    background-position: -200% 0%;
+  }
+}
+
+@keyframes spinning {
+  0% {
+    transform: rotate3d(0, 0, 1, 0);
+  }
+
+  100% {
+    transform: rotate3d(0, 0, 1, 360deg);
+  }
+}
+
 /* .text-shadow-sm {
   text-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
 }

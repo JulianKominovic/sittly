@@ -10,22 +10,29 @@ export type Validation = {
 const InputText = (
   props: Partial<InputProps> & { validations?: Validation[] }
 ) => {
-  const { value, bindings } = useInput(props.initialValue ?? "");
-
   const helper = React.useMemo(() => {
+    if (!props.value) return;
     return props.validations?.find((validation) =>
-      validation.validationFn(value)
+      validation.validationFn(props.value)
     );
-  }, [value]);
+  }, [props.value]);
   return (
     <Input
       type="text"
-      css={{
-        mb: "$10",
-        w: "100%",
-      }}
-      {...bindings}
       {...props}
+      value={props.value}
+      onChange={(e) => {
+        if (props.onChange) props.onChange(e);
+      }}
+      css={{
+        w: "100%",
+        mb: "$10",
+        input: {
+          padding: "$4!important",
+          m: "0!important",
+        },
+        ...props.css,
+      }}
       status={helper?.severity ?? "default"}
       color={helper?.severity ?? "default"}
       helperColor={helper?.severity ?? "default"}

@@ -5,6 +5,7 @@ export type Command = {
   subtitle: string;
   id: string;
   steps: CommandStep[];
+  icon: string;
 };
 export type CommandsStore = {
   commands: Command[];
