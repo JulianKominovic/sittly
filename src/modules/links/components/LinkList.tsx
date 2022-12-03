@@ -6,91 +6,120 @@ import useOpenLink from "../../../hooks/useOpenLink";
 import { HelperAction } from "../../../store/helperStore";
 import Divider from "../../../ui/decoration/Divider";
 import ListItem from "../../../ui/list/ListItem";
-import { SavedLinks } from "../types/Link";
+import { Link, SavedLinks } from "../types/Link";
 
 type Props = {
-  links: SavedLinks;
   setHelperOptions: (options: HelperAction) => void;
   setShowCreatePopup: React.Dispatch<React.SetStateAction<boolean>>;
+  setEditingLink: React.Dispatch<React.SetStateAction<Link | null>>;
+  database: SavedLinks;
+  updateContent: (content: (previous: SavedLinks) => SavedLinks) => void;
 };
 
-const LinkList = ({ links, setHelperOptions, setShowCreatePopup }: Props) => {
+const LinkList = ({
+  database,
+  setHelperOptions,
+  setShowCreatePopup,
+  setEditingLink,
+  updateContent,
+}: Props) => {
   const { openLink } = useOpenLink();
   return (
     <>
-      {Object.entries(links).map(([key, value], index) => {
+      {Object.entries(database).map(([key, value], index) => {
         return (
-          <div key={key + index}>
-            <Divider label={key} />
+          value.length > 0 && (
+            <div key={key + index}>
+              <Divider
+                label={key}
+                align="start"
+                css={{
+                  mb: "$10",
+                  mt: "$10",
+                }}
+              />
 
-            {value.map((v) => {
-              return (
-                <ListItem
-                  key={v.id}
-                  title={v.title}
-                  icon={v.icon}
-                  action={{
-                    callback: () => openLink(v.url),
-                    explanation: "Abrir",
-                    keys: ["Enter"],
-                  }}
-                  onFocus={() => {
-                    setHelperOptions([
-                      {
-                        title: "Acciones",
-                        items: [
-                          {
-                            title: "Crear",
-                            color: "success",
-                            textColor: "success",
-                            key: "create",
-                            description: "Crear un nuevo link",
-                            icon: <FiPlus />,
-                            onClick: () => setShowCreatePopup(true),
-                            children: <></>,
-                            keyboardShorcut: ["ControlLeft", "KeyX"],
-                          },
-                          {
-                            title: "Editar",
-                            color: "warning",
-                            textColor: "warning",
-                            key: "edit",
-                            description: `Editar el comando`,
-                            icon: <FiEdit />,
-                            onClick: () => {},
-                            children: <></>,
-                            keyboardShorcut: ["ControlLeft", "KeyE"],
-                          },
-                          {
-                            title: "Abrir",
-                            color: "primary",
-                            textColor: "primary",
-                            key: "preview",
-                            description: `Ver el comando`,
-                            icon: <IoOpen />,
-                            onClick: () => {},
-                            children: <></>,
-                            keyboardShorcut: ["ControlLeft", "KeyP"],
-                          },
-                          {
-                            title: "Eliminar",
-                            color: "error",
-                            textColor: "error",
-                            key: "delete",
-                            description: `Eliminar el comando`,
-                            icon: <RiDeleteBin2Line />,
-                            onClick: () => {},
-                            children: <></>,
-                            keyboardShorcut: ["ControlLeft", "Delete"],
-                          },
-                        ],
-                      },
-                    ]);
-                  }}
-                />
-              );
-            })}
-          </div>
+              {value.map((v) => {
+                return (
+                  <ListItem
+                    key={v.id}
+                    title={v.title}
+                    icon={v.icon}
+                    action={{
+                      callback: () => openLink(v.url),
+                      explanation: "Abrir",
+                      keys: ["Enter"],
+                    }}
+                    onFocus={() => {
+                      setHelperOptions([
+                        {
+                          title: "Acciones",
+                          items: [
+                            {
+                              title: "Crear",
+                              color: "success",
+                              textColor: "success",
+                              key: "create",
+                              description: "Crear un nuevo link",
+                              icon: <FiPlus />,
+                              onClick: () => setShowCreatePopup(true),
+                              children: <></>,
+                              keyboardShorcut: ["ControlLeft", "KeyX"],
+                            },
+                            {
+                              title: "Editar",
+                              color: "warning",
+                              textColor: "warning",
+                              key: "edit",
+                              description: `Editar el comando`,
+                              icon: <FiEdit />,
+                              onClick: () => {
+                                setEditingLink(v);
+                                setShowCreatePopup(true);
+                              },
+                              children: <></>,
+                              keyboardShorcut: ["ControlLeft", "KeyE"],
+                            },
+                            {
+                              title: "Abrir",
+                              color: "primary",
+                              textColor: "primary",
+                              key: "preview",
+                              description: `Ver el comando`,
+                              icon: <IoOpen />,
+                              onClick: () => {},
+                              children: <></>,
+                              keyboardShorcut: ["ControlLeft", "KeyP"],
+                            },
+                            {
+                              title: "Eliminar",
+                              color: "error",
+                              textColor: "error",
+                              key: "delete",
+                              description: `Eliminar el comando`,
+                              icon: <RiDeleteBin2Line />,
+                              onClick: () => {
+                                updateContent((prev) => {
+                                  return {
+                                    ...prev,
+                                    [key]: prev[key].filter(
+                                      (el) => el.id !== v.id
+                                    ),
+                                  };
+                                });
+                              },
+                              children: <></>,
+                              keyboardShorcut: ["ControlLeft", "Delete"],
+                            },
+                          ],
+                        },
+                      ]);
+                    }}
+                  />
+                );
+              })}
+            </div>
+          )
         );
       })}
     </>

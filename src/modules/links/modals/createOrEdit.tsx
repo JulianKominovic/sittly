@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { BsGithub } from "react-icons/bs";
+import React, { useEffect, useState } from "react";
 import InputSelect from "../../../ui/form/InputSelect";
 import InputText from "../../../ui/form/InputText";
 import Modal from "../../../ui/modal";
@@ -10,15 +9,8 @@ type Props = {
   setShowPopup: React.Dispatch<React.SetStateAction<boolean>>;
   categories: string[];
   updateContent: (content: (previous: SavedLinks) => SavedLinks) => void;
-};
-
-const DEFAULT_LINK: Link = {
-  fav: false,
-  icon: "?",
-  id: crypto.randomUUID(),
-  title: "",
-  url: "",
-  category: "",
+  existingLink: Link | null;
+  setEditingLink: React.Dispatch<React.SetStateAction<Link | null>>;
 };
 
 const Create = ({
@@ -26,9 +18,23 @@ const Create = ({
   setShowPopup,
   categories,
   updateContent,
+  existingLink,
+  setEditingLink,
 }: Props) => {
-  const [newLink, setNewLink] = useState<Link>(DEFAULT_LINK);
+  const DEFAULT_LINK: Link = {
+    fav: false,
+    icon: "?",
+    id: crypto.randomUUID(),
+    title: "",
+    url: "",
+    category: "",
+  };
 
+  const [newLink, setNewLink] = useState<Link>(existingLink || DEFAULT_LINK);
+  useEffect(() => {
+    if (existingLink) setNewLink(existingLink);
+    else setNewLink(DEFAULT_LINK);
+  }, [existingLink, showPopup]);
   return (
     <Modal
       title="Guardar nuevo link"
@@ -36,7 +42,31 @@ const Create = ({
       setShowPopup={setShowPopup}
       acceptButton={{
         onClick: () => {
-          console.log("SAVE");
+          if (existingLink) {
+            updateContent((prev) => {
+              if (existingLink.category === newLink.category) {
+                return {
+                  ...prev,
+                  [newLink.category]: prev[newLink.category]?.map((link) =>
+                    link.id === newLink.id ? newLink : link
+                  ),
+                };
+              } else {
+                return {
+                  ...prev,
+                  [existingLink.category]: prev[existingLink.category].filter(
+                    (item) => item.id !== newLink.id
+                  ),
+                  [newLink.category]:
+                    prev[newLink.category]?.length > 0
+                      ? prev[newLink.category].concat(newLink)
+                      : [newLink],
+                };
+              }
+            });
+            setEditingLink(null);
+            return;
+          }
           updateContent((prev) => ({
             ...prev,
             [newLink.category]: [
@@ -48,7 +78,9 @@ const Create = ({
         text: "Aceptar",
       }}
       cancelButton={{
-        onClick: () => {},
+        onClick: () => {
+          setShowPopup(false);
+        },
         text: "Cancelar",
       }}
     >
@@ -83,13 +115,17 @@ const Create = ({
             setNewLink((prev) => ({ ...prev, category: newValue }));
           },
         }}
-        options={categories.map((category) => ({
-          value: category,
-          label: category,
-          onClick: () => {
-            setNewLink((prev) => ({ ...prev, category }));
-          },
-        }))}
+        initialValue={newLink.category}
+        options={categories.map((category) => {
+          return {
+            value: category,
+            label: category,
+            onClick: () => {
+              console.log(category);
+              setNewLink((prev) => ({ ...prev, category }));
+            },
+          };
+        })}
       />
       <InputText
         type="url"

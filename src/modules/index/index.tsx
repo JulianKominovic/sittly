@@ -216,7 +216,9 @@ const Index = () => {
 
   const memoizedIndex: Manifest[] = useMemo(() => {
     if (!value)
-      return INDEX.filter((item) => !item.entryPoint.onlyQuerybarFuncion);
+      return INDEX.filter(
+        (item) => !item.entryPoint.onlyQuerybarFuncion && item.module !== ""
+      );
     const notQuerybarFunctionItems = fuzzysort
       .go(value, INDEX, {
         key: "displayName",
@@ -227,9 +229,11 @@ const Index = () => {
 
     const findByTriggeringWord = INDEX.concat(DEFAULT_ITEM).filter(
       (item) =>
+        item.module !== "" &&
         item.entryPoint.onlyQuerybarFuncion &&
         new RegExp(`${item.entryPoint.triggerWord}.*`, "i").test(value)
     );
+    console.log(findByTriggeringWord);
     return findByTriggeringWord.length > 0
       ? findByTriggeringWord
       : [DEFAULT_ITEM];
@@ -265,7 +269,7 @@ const Index = () => {
               }
             },
             explanation: "Ir",
-            keys: [KEYS.Enter],
+            keys: ["Enter"],
           }}
         />
       ))}

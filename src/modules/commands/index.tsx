@@ -1,6 +1,6 @@
 import { Container, Text } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
-import { FiDelete, FiEdit, FiPlus } from "react-icons/fi";
+import { FiCopy, FiDelete, FiEdit, FiPlus } from "react-icons/fi";
 import { IoCreate } from "react-icons/io5";
 import { RiDeleteBin2Line } from "react-icons/ri";
 import { VscPreview, VscSearchStop } from "react-icons/vsc";
@@ -12,6 +12,7 @@ import {
   useNavigation,
 } from "react-router";
 import { Link } from "react-router-dom";
+import useClipboard from "../../hooks/useClipboard";
 import useDatabase from "../../hooks/useDatabase";
 import useExecCommand from "../../hooks/useExecCommand";
 import useHelper from "../../hooks/useHelper";
@@ -24,20 +25,38 @@ import { CommandsStore } from "./store";
 
 const Commands = () => {
   const { executeCommand } = useExecCommand();
-  const { getContent, updateContent } = useDatabase<CommandsStore>();
+  const { database, updateContent } = useDatabase<CommandsStore>();
   const [commands, setCommands] = useState<CommandsStore["commands"]>(
-    () => getContent()?.commands
+    () => database?.commands
   );
+  const { write } = useClipboard();
   const navigate = useNavigate();
 
   const handleDeleteCommand = (commandID: string) => {
-    updateContent({
+    updateContent(() => ({
       commands: commands.filter((cmd) => cmd.id !== commandID),
-    });
-    setCommands(getContent().commands);
+    }));
+    setCommands(database.commands);
   };
 
-  const { setHelperOptions } = useHelper(null);
+  const { setHelperOptions } = useHelper([
+    {
+      title: "Acciones",
+      items: [
+        {
+          title: "Crear",
+          color: "success",
+          textColor: "success",
+          key: "create",
+          description: "Crear un nuevo comando",
+          icon: <FiPlus />,
+          onClick: () => navigate("create/"),
+          children: <></>,
+          keyboardShorcut: ["ControlLeft", "KeyX"],
+        },
+      ],
+    },
+  ]);
 
   const { value } = useQuerybar();
 
@@ -45,7 +64,7 @@ const Commands = () => {
     new RegExp(value, "i").test(c.title)
   );
 
-  if (filteredCommands.length === 0)
+  if (!filteredCommands || filteredCommands?.length < 1)
     return <NoResultsSearch searchValue={value} />;
   return (
     <>
@@ -105,6 +124,22 @@ const Commands = () => {
                   },
                 ],
               },
+              {
+                title: "Usuario",
+                items: [
+                  {
+                    title: "Copiar",
+                    color: "primary",
+                    textColor: "primary",
+                    key: "copy",
+                    description: "Copiar comando",
+                    icon: <FiCopy />,
+                    onClick: () => write(calculateCommandOutput(steps)),
+                    children: <></>,
+                    keyboardShorcut: ["ControlLeft", "KeyC"],
+                  },
+                ],
+              },
             ]);
           }}
           icon={icon}
@@ -113,7 +148,7 @@ const Commands = () => {
               executeCommand(calculateCommandOutput(steps));
             },
             explanation: "Ejecutar",
-            keys: [KEYS.Enter],
+            keys: ["Enter"],
           }}
         />
       ))}

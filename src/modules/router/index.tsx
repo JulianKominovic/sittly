@@ -37,14 +37,16 @@ function Searchbar() {
       >
         <Routes>
           <Route path="/" index element={<Index />} />
-          {INDEX.map((mod, i) => (
-            <Route path={"/" + mod.module} key={mod.module + i}>
-              {!mod.entryPoint.onlyQuerybarFuncion &&
-                mod.entryPoint.routes.map((props) => (
-                  <Route key={mod.module + i + "app"} {...props} />
-                ))}
-            </Route>
-          ))}
+          {INDEX.map((mod, i) => {
+            return (
+              <Route path={"/" + mod.module} key={mod.module + i}>
+                {!mod.entryPoint.onlyQuerybarFuncion &&
+                  mod.entryPoint.routes.map((props) => (
+                    <Route key={mod.module + i + "app"} {...props} />
+                  ))}
+              </Route>
+            );
+          })}
         </Routes>
       </Container>
       <Footer />

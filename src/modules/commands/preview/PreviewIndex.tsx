@@ -12,9 +12,9 @@ import { CommandsStore } from "../store";
 type Props = {};
 
 const PreviewIndex = (props: Props) => {
-  const { updateContent, getContent } = useDatabase<CommandsStore>();
+  const { updateContent, database } = useDatabase<CommandsStore>();
   const { id: commandID } = useParams();
-  const command = getContent()?.commands.find((cmd) => cmd.id === commandID);
+  const command = database?.commands.find((cmd) => cmd.id === commandID);
   const { calculatedCommandOutput, testCommand } = useRunCommand({
     externalSteps: command?.steps as CommandStep[],
   });

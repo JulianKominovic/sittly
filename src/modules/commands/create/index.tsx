@@ -32,9 +32,9 @@ const addStep = (index: number) => ({
 });
 
 const CreateOrEditCommand = () => {
-  const { updateContent, getContent } = useDatabase<CommandsStore>();
+  const { updateContent, database } = useDatabase<CommandsStore>();
   const { id: commandID } = useParams();
-  const command = getContent()?.commands.find((cmd) => cmd.id === commandID);
+  const command = database?.commands?.find((cmd) => cmd.id === commandID);
   const [steps, setSteps] = useState<CommandStep[]>(() =>
     command ? command.steps : [addStep(0)]
   );
@@ -48,9 +48,7 @@ const CreateOrEditCommand = () => {
     externalSteps: steps,
   });
 
-  const { setHelperOptions } = useHelper(null);
-
-  setHelperOptions([
+  const { setHelperOptions } = useHelper([
     {
       title: "Acciones",
       items: [
@@ -79,7 +77,6 @@ const CreateOrEditCommand = () => {
   ]);
 
   const handleSaveToDatabase = () => {
-    const content = getContent();
     const newItem = {
       id: command ? command.id : crypto.randomUUID(),
       steps,
@@ -88,16 +85,16 @@ const CreateOrEditCommand = () => {
       icon,
     };
     command
-      ? updateContent({
+      ? updateContent((content) => ({
           commands: content.commands.map((cmd) =>
             cmd.id === command.id ? newItem : cmd
           ),
-        })
-      : updateContent({
+        }))
+      : updateContent((content) => ({
           commands: content.commands
             ? content.commands.concat(newItem)
             : [newItem],
-        });
+        }));
 
     navigate("../", {
       relative: "path",
@@ -200,10 +197,7 @@ const CreateOrEditCommand = () => {
         {steps.map((step) => {
           return (
             <div key={step.index + "item"} className="mb-5">
-              <Divider
-                styles={{ marginBottom: 16 }}
-                label={"Paso - " + step.index}
-              />
+              <Divider label={"Paso - " + step.index} />
               <InputText
                 onChange={(e) => handleSaveCommand(e.target.value, step.index)}
                 id={step.index + ""}

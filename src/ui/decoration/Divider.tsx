@@ -14,7 +14,7 @@ type Props = { label: string } & Partial<{
 
 const Divider = (props: Props) => {
   return (
-    <NextDivider {...props} y={1}>
+    <NextDivider y={1} {...props}>
       {props.label}
     </NextDivider>
   );

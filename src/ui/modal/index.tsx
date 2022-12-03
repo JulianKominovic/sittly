@@ -44,7 +44,7 @@ const NextModal = ({
     setShowingModal(value);
   };
 
-  return showingModal ? (
+  return showingModal && showPopup ? (
     <Modal
       css={{
         m: "$10",
@@ -58,7 +58,6 @@ const NextModal = ({
       closeButton={false}
       aria-labelledby="modal-title"
       open={true}
-      preventClose
     >
       <Modal.Header
         css={{

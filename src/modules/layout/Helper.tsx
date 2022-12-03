@@ -19,8 +19,6 @@ const Helper = () => {
   const navigation = useNavigate();
   const { isDark } = useTheme();
 
-  console.log(isHelperOpen);
-
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (!options || options.length < 1) return;

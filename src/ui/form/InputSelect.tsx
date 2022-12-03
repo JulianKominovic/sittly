@@ -1,5 +1,5 @@
 import { Container, Text } from "@nextui-org/react";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AiFillCaretDown } from "react-icons/ai";
 import { BsCheck, BsPlus } from "react-icons/bs";
 import { FiSearch } from "react-icons/fi";
@@ -11,6 +11,7 @@ type OptionType = { label: string; value: string; onClick: () => void };
 type Props = {
   options: OptionType[];
   label: string;
+  initialValue: string;
   noResult?: {
     should: "DO_NOTHING" | "ADD_OPTION";
     /**
@@ -29,12 +30,17 @@ const NO_RESULT_ADD_OPTION_COMPONENT = ({ value }: { value: string }) => (
   </Text>
 );
 
-const InputSelect = ({ noResult, options, label }: Props) => {
+const InputSelect = ({ noResult, options, label, initialValue }: Props) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<null | string>(null);
 
   const inputRef = useRef<null | HTMLInputElement>(null);
+
+  useEffect(() => {
+    setSearch(initialValue);
+    setSelected(initialValue);
+  }, [initialValue]);
 
   const filteredOptions = useMemo(
     () => options.filter((opt) => new RegExp(search, "i").test(opt.value)),
@@ -109,18 +115,21 @@ const InputSelect = ({ noResult, options, label }: Props) => {
         }}
       >
         {filteredOptions.length > 0 ? (
-          filteredOptions.map(({ label, value }) => (
+          filteredOptions.map(({ label, value, onClick }) => (
             <Button
+              key={value}
               onKeyUp={(e) => {
                 if (e.code === "ArrowDown" || e.code === "ArrowUp") return;
                 if (e.code === "Enter") {
                   setSelected(value);
                   setSearch(value);
+                  onClick();
                   inputRef.current?.focus();
                   inputRef.current?.scrollIntoView({
                     block: "center",
                     inline: "center",
                   });
+
                   return setOpen(false);
                 }
                 if (open) {
@@ -151,7 +160,10 @@ const InputSelect = ({ noResult, options, label }: Props) => {
               onClick={(e) => {
                 setSelected(value);
                 setSearch(value);
+                onClick();
+
                 setOpen(false);
+
                 inputRef.current?.focus();
               }}
             >

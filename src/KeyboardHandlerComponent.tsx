@@ -87,7 +87,6 @@ const KeyboardHandlerComponent = () => {
         document.querySelector("#query-bar")?.focus();
         return;
       }
-      console.log("document.activeElement");
     };
     window.addEventListener("keydown", handleQueryBarEnter);
     return () => {
@@ -157,7 +156,6 @@ const KeyboardHandlerComponent = () => {
             setHelperOpen(true);
             return;
           }
-          console.log("NO DEPS");
 
           break;
       }
@@ -184,8 +182,6 @@ const KeyboardHandlerComponent = () => {
           relative: "path",
         });
       }
-
-      console.log("location.path");
     };
     window.addEventListener("keydown", handleExit);
     return () => {
