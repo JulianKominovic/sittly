@@ -10,6 +10,7 @@ import { FontSizeType } from "../../types/fontSize";
 import Icon from "../decoration/Icon";
 import { TailwindColors } from "../../enum/TailwindColors";
 import { Button, Container, Text } from "@nextui-org/react";
+import { KeyCodes } from "../../types/KeyCodes";
 
 export type Stage = {
   to?: string;
@@ -18,7 +19,7 @@ export type Stage = {
 export type Action = {
   explanation: string;
   callback: (objectProps: ListItemProps) => void;
-  keys: KEYS[];
+  keys: KeyCodes[];
 };
 export type ListItemProps = {
   title: string;
@@ -26,7 +27,6 @@ export type ListItemProps = {
   imageSrc?: string;
   action?: Action;
   alwaysShowKeys?: boolean;
-  helperActions?: HelperAction[];
 
   icon?: React.ReactNode | SVGElement | string;
   iconSize?: FontSizeType;
@@ -44,7 +44,6 @@ function ListItem({
   action,
   icon,
   iconSize = "base",
-  helperActions,
   alwaysShowKeys,
   onBlur,
   onFocus,

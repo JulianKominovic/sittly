@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { useLocation, useNavigate } from "react-router";
-import { TailwindColors } from "./enum/TailwindColors";
 import { KEYS } from "./lib/keys";
 import {
   findLeftTabStop,
@@ -9,6 +8,8 @@ import {
   findRightTabStop,
 } from "./navegation";
 import { useHelper } from "./store/helperStore";
+import { useShowingModal } from "./store/modalPopup";
+import { useQuerybarStore } from "./store/querybarStore";
 import { AsyncStatusEnum, useStatusStore } from "./store/statusbarStore";
 const { ipcRenderer } = require("electron");
 
@@ -17,6 +18,9 @@ const KeyboardHandlerComponent = () => {
   const location = useLocation();
   const setHelperOpen = useHelper((state) => state.setHelperOpen);
   const setHelperOptions = useHelper((state) => state.setOptions);
+  const showingModal = useShowingModal((state) => state.showingModal);
+  const setShowingModal = useShowingModal((state) => state.setShowingModal);
+  const setQuerybarValue = useQuerybarStore((state) => state.setValue);
 
   const asyncStatus = useStatusStore((state) => state.asyncStatus);
   useEffect(() => {
@@ -71,15 +75,19 @@ const KeyboardHandlerComponent = () => {
         notArrows &&
         e.key !== "Enter" &&
         e.code !== "Space" &&
+        e.code !== "Escape" &&
         !e.ctrlKey &&
         !e.altKey
       ) {
         document.querySelector("#query-bar")?.focus();
+        return;
       }
       if (e.key === "Enter" && document.activeElement.id === "query-bar") {
         findNextTabStop(document.activeElement)?.click();
         document.querySelector("#query-bar")?.focus();
+        return;
       }
+      console.log("document.activeElement");
     };
     window.addEventListener("keydown", handleQueryBarEnter);
     return () => {
@@ -96,6 +104,7 @@ const KeyboardHandlerComponent = () => {
       if (elementFound) {
         elementFound.focus();
         elementFound.scrollIntoView({ block: "center" });
+        return;
       }
     };
 
@@ -109,11 +118,7 @@ const KeyboardHandlerComponent = () => {
 
         return;
       }
-      if (e.key === "f" && e.ctrlKey) {
-        e.preventDefault();
-        document.querySelector("#query-bar")?.focus();
-        return;
-      }
+
       switch (e.key) {
         case "ArrowUp":
           handleArrowPress(
@@ -150,7 +155,9 @@ const KeyboardHandlerComponent = () => {
         default:
           if (e.ctrlKey && e.code === "KeyO") {
             setHelperOpen(true);
+            return;
           }
+          console.log("NO DEPS");
 
           break;
       }
@@ -161,27 +168,39 @@ const KeyboardHandlerComponent = () => {
     };
   }, []);
 
-  useEffect(() => {
-    document.querySelector("#query-bar").focus();
+  useLayoutEffect(() => {
     const handleExit = (e: KeyboardEvent) => {
+      if (showingModal) {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          setShowingModal(false);
+          return;
+        }
+      }
+
       if (e.key === "Escape") {
-        e.preventDefault();
         if (location.pathname === "/") return ipcRenderer.send("hide-window");
         return navigation("../", {
           relative: "path",
         });
       }
+
+      console.log("location.path");
     };
     window.addEventListener("keydown", handleExit);
-
     return () => {
       window.removeEventListener("keydown", handleExit);
     };
+  }, [location.pathname, showingModal]);
+
+  useLayoutEffect(() => {
+    const querybar = document.querySelector("#query-bar");
+    querybar.focus();
+    setQuerybarValue("");
+
+    setHelperOptions([]);
   }, [location.pathname]);
 
-  // useEffect(() => {
-  //   setHelperOptions([]);
-  // }, [window.location.href]);
   return <div />;
 };
 

@@ -25,7 +25,11 @@ function Keystroke({ id, keys, size = "sm", rounded }: TypeKeystroke) {
       }}
     >
       {keys.map((key, index) => (
-        <KBD id={id + index + key} data-highlight-key={key}>
+        <KBD
+          key={id + index + key}
+          id={id + index + key}
+          data-highlight-key={key}
+        >
           {key}
         </KBD>
       ))}

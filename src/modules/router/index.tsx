@@ -1,20 +1,16 @@
-import styled from "styled-components";
-import Navbar from "../navbar";
 import Footer from "../layout/Footer";
 import Querybar from "../layout/Querybar";
-import Helper from "../layout/Helper";
 import KeyboardHandlerComponent from "../../KeyboardHandlerComponent";
 import { Route, Routes } from "react-router-dom";
-import { useSettings } from "../../store/settingsStore";
 import Index, { INDEX } from "../index/index";
 
 import { Container } from "@nextui-org/react";
 
 function Searchbar() {
-  const colorPallette = useSettings((state) => state.colorPallette);
+  // const colorPallette = useSettings((state) => state.colorPallette);
   return (
     <Container
-      colorPallette={colorPallette}
+      // colorPallette={colorPallette}
       css={{
         borderRadius: 24,
         background: "$background",
@@ -26,7 +22,7 @@ function Searchbar() {
       fluid
     >
       <Querybar />
-      <Navbar />
+      {/* <Navbar /> */}
       <Container
         as="main"
         css={{
@@ -41,10 +37,12 @@ function Searchbar() {
       >
         <Routes>
           <Route path="/" index element={<Index />} />
-          {INDEX.map((mod) => (
-            <Route path={"/" + mod.module}>
+          {INDEX.map((mod, i) => (
+            <Route path={"/" + mod.module} key={mod.module + i}>
               {!mod.entryPoint.onlyQuerybarFuncion &&
-                mod.entryPoint.routes.map((props) => <Route {...props} />)}
+                mod.entryPoint.routes.map((props) => (
+                  <Route key={mod.module + i + "app"} {...props} />
+                ))}
             </Route>
           ))}
         </Routes>

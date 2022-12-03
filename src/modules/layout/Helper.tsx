@@ -19,6 +19,8 @@ const Helper = () => {
   const navigation = useNavigate();
   const { isDark } = useTheme();
 
+  console.log(isHelperOpen);
+
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (!options || options.length < 1) return;
@@ -30,7 +32,6 @@ const Helper = () => {
           if (!op.keyboardShorcut) return;
           if (
             op.keyboardShorcut.every((key) => {
-              console.log(key);
               if (key === "ControlLeft" && e.ctrlKey) return true;
               if (key === "AltLeft" && e.altKey) return true;
 
@@ -115,8 +116,8 @@ const Helper = () => {
         }}
       >
         {
-          options?.map(({ title, items }) => (
-            <Dropdown.Section title={title}>
+          options?.map(({ title, items }, index) => (
+            <Dropdown.Section title={title} key={"hpr" + index + title}>
               {items.map((item) => (
                 <Dropdown.Item
                   {...item}

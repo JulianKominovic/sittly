@@ -20,6 +20,8 @@ import { TailwindColors } from "../../enum/TailwindColors";
 import CreateOrEditCommand from "../commands/create";
 import Preview from "../commands/preview";
 import PreviewIndex from "../commands/preview/PreviewIndex";
+import { FiLink } from "react-icons/fi";
+import LinkSaver from "../links";
 
 type OnlyQuerybarModuleProps = {
   querybar: {
@@ -138,6 +140,22 @@ export const INDEX: Manifest[] = [
         {
           path: "preview",
           element: <Navigate to={"../"} relative="path" />,
+        },
+      ],
+    },
+    iconColor: TailwindColors.indigo,
+  },
+  {
+    module: "Links",
+    displayName: "Links",
+    description: "Links guardados",
+    icon: <FiLink />,
+    entryPoint: {
+      onlyQuerybarFuncion: false,
+      routes: [
+        {
+          index: true,
+          element: <LinkSaver />,
         },
       ],
     },

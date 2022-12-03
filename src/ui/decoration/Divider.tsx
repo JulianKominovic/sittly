@@ -1,44 +1,22 @@
-import { styled } from "@nextui-org/react";
-import React from "react";
+import {
+  styled,
+  Divider as NextDivider,
+  DividerProps,
+} from "@nextui-org/react";
 
-type Props = {
-  styles?: {
-    marginTop?: number;
-    marginBottom?: number;
-  };
-  label: string;
-};
+type Props = { label: string } & Partial<{
+  x: number;
+  y: number;
+  height: number;
+  align: "left" | "right" | "start" | "center" | "end";
+}> &
+  Omit<DividerProps, "height" | "x" | "y" | "align">;
 
-const DividerStyled = styled("div", {
-  "&::after": {
-    border: "1px solid $accents3",
-    content: "",
-    w: "100%",
-    mx: "$8",
-    display: "block",
-    h: "1px",
-  },
-  w: "100%",
-  pr: "8",
-  d: "flex",
-  color: "$accents6",
-  alignItems: "center",
-  whiteSpace: "pre",
-});
-
-const Divider = ({
-  styles: { marginTop, marginBottom } = {},
-  label,
-}: Props) => {
+const Divider = (props: Props) => {
   return (
-    <DividerStyled
-      css={{ mb: `${marginBottom}px`, mt: `${marginTop}px` }}
-      className={`${marginTop || ""} ${marginBottom || ""}
-      
-      after:border after:border-color-normal text-color-light text-sm after:ml-2 after:w-full after:block flex gap-3 after:h-px w-full pr-4 items-center whitespace-pre focus:text-color-normal focus:after:border-color-normal focus:outline-none`}
-    >
-      {label}
-    </DividerStyled>
+    <NextDivider {...props} y={1}>
+      {props.label}
+    </NextDivider>
   );
 };
 

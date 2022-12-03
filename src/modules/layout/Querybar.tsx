@@ -62,9 +62,19 @@ const Querybar = () => {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           css={{
-            w: "300px",
+            w: "500px",
             my: "0",
             mx: "$4",
+
+            // label: {
+            //   "&::before": {
+            //     content: ,
+            //     px: "$4",
+            //     bg: "$background",
+            //     borderRadius: "$sm",
+            //   },
+            //   pl: "$4",
+            // },
             input: {
               fontSize: "$md",
               m: "0",
@@ -82,6 +92,7 @@ const Querybar = () => {
           mx: "$0",
           p: "0",
           justifyContent: "flex-end",
+          w: "fit-content",
         }}
       >
         <Container
@@ -93,26 +104,11 @@ const Querybar = () => {
             gap: "$2",
             mx: "$0",
             p: "0",
-            w: "fit-content",
+            w: "max-content",
           }}
         >
           <small>Elegir primer resultado/</small>
           <Keystroke id="query-bar-first-result" keys={[KEYS.Enter]} />
-        </Container>
-        <Container
-          as="aside"
-          css={{
-            maxW: "none",
-            display: "flex",
-            alignItems: "center",
-            gap: "$2",
-            mx: "$0",
-            p: "0",
-            w: "fit-content",
-          }}
-        >
-          <small>Escribir/</small>
-          <Keystroke id="search-bar" keys={[KEYS.ControlLeft, KEYS.keyF]} />
         </Container>
       </Container>
     </Container>
