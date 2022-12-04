@@ -9,7 +9,10 @@ export type Validation = {
 };
 
 const InputTextArea = (
-  props: Partial<TextareaProps> & { validations: Validation[] }
+  props: Partial<TextareaProps> & {
+    validations?: Validation[];
+    readonly?: boolean;
+  }
 ) => {
   const { value, bindings } = useInput(props.initialValue ?? "");
 

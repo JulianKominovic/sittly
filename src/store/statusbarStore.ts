@@ -55,7 +55,7 @@ export const useStatusStore = create<UseStatusStore>((set, get) => ({
         timeoutId = setTimeout(() => {
           clearTimeout(timeoutId);
           set((previous) => ({ ...previous, timeoutId, asyncOperations: [] }));
-        }, 3000);
+        }, 3000) as unknown as number;
       }
 
       return {

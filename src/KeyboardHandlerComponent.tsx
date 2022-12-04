@@ -23,6 +23,13 @@ const KeyboardHandlerComponent = () => {
   const setQuerybarValue = useQuerybarStore((state) => state.setValue);
 
   const asyncStatus = useStatusStore((state) => state.asyncStatus);
+
+  useEffect(() => {
+    ipcRenderer.on("location-change", (event, route) => {
+      navigation(route);
+    });
+  }, []);
+
   useEffect(() => {
     switch (asyncStatus) {
       case AsyncStatusEnum.IN_PROGRESS:
@@ -79,12 +86,17 @@ const KeyboardHandlerComponent = () => {
         !e.ctrlKey &&
         !e.altKey
       ) {
-        document.querySelector("#query-bar")?.focus();
+        (document.querySelector("#query-bar") as HTMLElement)?.focus();
         return;
       }
-      if (e.key === "Enter" && document.activeElement.id === "query-bar") {
-        findNextTabStop(document.activeElement)?.click();
-        document.querySelector("#query-bar")?.focus();
+      if (
+        e.key === "Enter" &&
+        (document.activeElement as HTMLElement).id === "query-bar"
+      ) {
+        (
+          findNextTabStop(document.activeElement as HTMLElement) as HTMLElement
+        )?.click();
+        (document.querySelector("#query-bar") as HTMLElement)?.focus();
         return;
       }
     };
@@ -96,45 +108,35 @@ const KeyboardHandlerComponent = () => {
 
   useEffect(() => {
     const handleArrowPress = (
-      elementFound: HTMLButtonElement,
+      elementFound: Element | null,
       e: KeyboardEvent
     ) => {
       e.preventDefault();
       if (elementFound) {
-        elementFound.focus();
+        (elementFound as HTMLElement).focus();
         elementFound.scrollIntoView({ block: "center" });
         return;
       }
     };
 
     const handler = (e: KeyboardEvent) => {
-      if (!isNaN(e.key) && e.ctrlKey) {
-        const navbarItem = document.querySelector(
-          `[data-focuseablekeyctrl="${e.key}"]`
-        );
-        navbarItem?.click();
-        navbarItem?.focus();
-
-        return;
-      }
-
       switch (e.key) {
         case "ArrowUp":
           handleArrowPress(
-            findPrevTabStop(document.activeElement as HTMLButtonElement),
+            findPrevTabStop(document.activeElement as HTMLElement),
             e
           );
           break;
         case "ArrowDown":
           handleArrowPress(
-            findNextTabStop(document.activeElement as HTMLButtonElement),
+            findNextTabStop(document.activeElement as HTMLElement),
             e
           );
           break;
         case "ArrowRight":
           if (document.activeElement?.nodeName === "INPUT") return;
           handleArrowPress(
-            findRightTabStop(document.activeElement as HTMLButtonElement),
+            findRightTabStop(document.activeElement as HTMLElement),
             e
           );
           break;
@@ -142,10 +144,7 @@ const KeyboardHandlerComponent = () => {
           if (document.activeElement?.nodeName === "INPUT") return;
 
           handleArrowPress(
-            findLeftTabStop(
-              document.activeElement as HTMLButtonElement,
-              navigation
-            ),
+            findLeftTabStop(document.activeElement as HTMLElement, navigation),
             e
           );
 
@@ -190,7 +189,7 @@ const KeyboardHandlerComponent = () => {
   }, [location.pathname, showingModal]);
 
   useLayoutEffect(() => {
-    const querybar = document.querySelector("#query-bar");
+    const querybar = document.querySelector("#query-bar") as HTMLElement;
     querybar.focus();
     setQuerybarValue("");
 

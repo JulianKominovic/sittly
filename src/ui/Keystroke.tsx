@@ -1,19 +1,18 @@
 import { Container, styled } from "@nextui-org/react";
 import React from "react";
 import { KEYS } from "../lib/keys";
+import { KeyCodes } from "../types/KeyCodes";
 
 export type TypeKeystroke = {
   id: string;
-  keys: KEYS[];
-  size?: "sm" | "xs" | "xxs";
-  rounded?: boolean;
+  keys: (KeyCodes | KEYS)[];
 };
 
 const KBD = styled("kbd", {
   borderBlockEnd: "2px solid $accents5",
 });
 
-function Keystroke({ id, keys, size = "sm", rounded }: TypeKeystroke) {
+function Keystroke({ id, keys }: TypeKeystroke) {
   return (
     <Container
       css={{

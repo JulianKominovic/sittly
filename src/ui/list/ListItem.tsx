@@ -1,14 +1,9 @@
-import React, { useRef, useState } from "react";
-
-// import { motion } from 'framer-motion';
+import React, { useRef } from "react";
 import firstLetterUpperCase from "../../lib/firstLetterUpperCase";
-import { KEYS } from "../../lib/keys";
 import Keystroke from "../Keystroke";
 import { ButtonProps } from "@nextui-org/react";
-import { HelperAction, useHelper } from "../../store/helperStore";
 import { FontSizeType } from "../../types/fontSize";
 import Icon from "../decoration/Icon";
-import { TailwindColors } from "../../enum/TailwindColors";
 import { Button, Container, Text } from "@nextui-org/react";
 import { KeyCodes } from "../../types/KeyCodes";
 
@@ -18,7 +13,7 @@ export type Stage = {
 
 export type Action = {
   explanation: string;
-  callback: (objectProps: ListItemProps) => void;
+  callback: () => void;
   keys: KeyCodes[];
 };
 export type ListItemProps = {
@@ -27,14 +22,13 @@ export type ListItemProps = {
   imageSrc?: string;
   action?: Action;
   alwaysShowKeys?: boolean;
-
   icon?: React.ReactNode | SVGElement | string;
   iconSize?: FontSizeType;
-  iconColor?: TailwindColors;
   onBlur?: (e: HTMLButtonElement) => void;
   onFocus?: (e: HTMLButtonElement) => void;
   ref?: any;
   css?: ButtonProps["css"];
+  mx?: number;
 };
 
 function ListItem({
@@ -47,7 +41,7 @@ function ListItem({
   alwaysShowKeys,
   onBlur,
   onFocus,
-  iconColor,
+  mx = 0,
   ...props
 }: ListItemProps) {
   const keystrokeRef = useRef<HTMLDivElement | null>(null);
@@ -61,6 +55,7 @@ function ListItem({
         display: "flex",
         w: "100%",
         my: "$4",
+        mx: `$${mx}`,
         p: "$2",
         h: "auto",
         ">span": {
@@ -80,10 +75,10 @@ function ListItem({
       tabIndex={0}
       onFocus={(e) => {
         if (keystrokeRef.current) keystrokeRef.current.style.display = "flex";
-        onFocus?.(e.target);
+        onFocus?.(e.target as HTMLButtonElement);
       }}
       onPress={() => {
-        action?.callback?.(props);
+        action?.callback?.();
       }}
     >
       <Container
@@ -95,7 +90,6 @@ function ListItem({
         }}
       >
         <Icon
-          iconColor={iconColor}
           imageSrc={imageSrc}
           title={title}
           icon={icon}

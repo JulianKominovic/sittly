@@ -29,6 +29,7 @@ import path from "path";
 import { exec } from "child_process";
 
 const SHOW_APP_SHORCUT = "Ctrl+Alt+K";
+const EMOJI_SHORCUT = "Super+Ctrl+.";
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith("6.1")) app.disableHardwareAcceleration();
@@ -52,7 +53,7 @@ const indexHtml = join(process.env.DIST, "index.html");
 async function createWindow() {
   win = new BrowserWindow({
     title: "Main window",
-    icon: join(process.env.PUBLIC, "favicon.svg"),
+    icon: join(process.env.PUBLIC as string, "favicon.svg"),
     // BEGIN - ACTIVATE ON PROD
     alwaysOnTop: false,
     vibrancy: "dark",
@@ -76,14 +77,14 @@ async function createWindow() {
   win.on("close", function (event) {
     if (!isQuitting) {
       event.preventDefault();
-      win.hide();
+      win?.hide();
       event.returnValue = false;
     }
   });
 
   if (process.env.VITE_DEV_SERVER_URL) {
     // electron-vite-vue#298
-    win.loadURL(url);
+    win.loadURL(url as string);
     // Open devTool if the app is not packaged
     win.webContents.openDevTools();
   } else {
@@ -104,18 +105,31 @@ async function createWindow() {
 
 app.whenReady().then(createWindow);
 app.whenReady().then(() => {
-  // Register a 'CommandOrControl+X' shortcut listener.
-  const registeredShow = globalShortcut.register(SHOW_APP_SHORCUT, () => {
-    win.show();
-    win?.focus();
+  const toRegister = [
+    {
+      keys: EMOJI_SHORCUT,
+      callback: () => {
+        win?.webContents.send("location-change", "/Emojis");
+        win?.show();
+        win?.focus();
+      },
+    },
+    {
+      keys: SHOW_APP_SHORCUT,
+      callback: () => {
+        win?.show();
+        win?.focus();
+      },
+    },
+  ];
+
+  toRegister.forEach(({ callback, keys }) => {
+    let registered = globalShortcut.register(keys, callback);
+    if (!registered) {
+      console.log("Registration failed.");
+    }
+    console.log(globalShortcut.isRegistered(SHOW_APP_SHORCUT));
   });
-
-  if (!registeredShow) {
-    console.log("registration failed");
-  }
-
-  // Check whether a shortcut is registered.
-  console.log(globalShortcut.isRegistered(SHOW_APP_SHORCUT));
 });
 
 app.on("before-quit", function () {
@@ -130,7 +144,7 @@ app.on("ready", () => {
       {
         label: "Show App",
         click: function () {
-          win.show();
+          win?.show();
         },
       },
       {
@@ -175,8 +189,11 @@ app.on("will-quit", () => {
 });
 
 ipcMain.on("hide-window", (evt, arg) => {
-  win.hide();
+  win?.hide();
 });
 ipcMain.on("run-command", (evt, arg) => {
   exec(`gnome-terminal --command="bash -c '${arg}; $SHELL'"`);
+});
+ipcMain.on("run-command-exec", (evt, arg) => {
+  exec(`${arg}`);
 });

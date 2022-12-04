@@ -30,7 +30,6 @@ function Searchbar() {
           overflowX: "visible",
           px: "$8",
           py: "$4",
-          pb: "$20",
           maxHeight: "300px",
           maxW: "800px",
         }}

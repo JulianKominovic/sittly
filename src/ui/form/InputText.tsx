@@ -15,7 +15,7 @@ const InputText = React.forwardRef(
     const helper = React.useMemo(() => {
       if (!props.value) return;
       return props.validations?.find((validation) =>
-        validation.validationFn(props.value)
+        validation.validationFn(props.value as string)
       );
     }, [props.value]);
     return (

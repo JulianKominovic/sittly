@@ -1,11 +1,18 @@
-import { clipboard } from "electron";
-import useAsync from "./useAsync";
+import { clipboard, ipcRenderer } from "electron";
 
 const useClipboard = () => {
-  const { doAsyncOperation } = useAsync();
+  const write = (text: string) => clipboard.writeText(text);
   return {
-    write: (text: string) => clipboard.writeText(text),
+    write,
     read: () => clipboard.readText(),
+    pasteToCurrentWindow: (text: string) => {
+      ipcRenderer.send("hide-window");
+      write(text);
+      ipcRenderer.send(
+        "run-command-exec",
+        "xdotool key --clearmodifiers ctrl+v"
+      );
+    },
   };
 };
 

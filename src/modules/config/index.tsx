@@ -1,7 +1,6 @@
 import React from "react";
 import useDatabase from "../../hooks/useDatabase";
 import { useSettings } from "../../store/settingsStore";
-import Flex from "../../ui/containers/Flex";
 import Divider from "../../ui/decoration/Divider";
 import InputSelect from "../../ui/form/InputSelect";
 import { ConfigStore } from "./store";
@@ -27,32 +26,25 @@ const Config = (props: Props) => {
   const { updateContent } = useDatabase<ConfigStore>();
   return (
     <div>
-      <Divider
-        styles={{
-          marginBottom: "mb-2",
-          marginTop: "mt-2",
-        }}
-        label="Visual"
-      />
+      <Divider marginBottom={2} marginTop={2} label="Visual" />
       <InputSelect
         label="Color pallette"
-        defaultValue="gray"
-        id="color-pallette"
+        initialValue="Default"
         options={[
           {
-            display: "Default",
+            label: "Default",
             value: "Default",
-            onSelect: () => {
+            onClick: () => {
               setColorPallette("");
-              updateContent({ theme: "" });
+              updateContent(() => ({ theme: "" }));
             },
           },
           ...Object.entries(COLOR_SCHEME).map(([key, value]) => ({
-            display: key,
+            label: key,
             value: key,
-            onSelect: () => {
+            onClick: () => {
               setColorPallette(value);
-              updateContent({ theme: value });
+              updateContent(() => ({ theme: value }));
             },
           })),
         ]}

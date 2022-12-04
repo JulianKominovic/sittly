@@ -7,13 +7,13 @@ import calculateCommandOutput from "../logic/calculateCommandOutput";
 import { CommandsStore } from "../store";
 
 const useRunCommand = ({ externalSteps }: { externalSteps: CommandStep[] }) => {
-  const { getContent } = useDatabase<CommandsStore>();
+  const { database } = useDatabase<CommandsStore>();
   const { id: commandID } = useParams();
 
   const { executeCommand } = useExecCommand();
   const steps =
     externalSteps ||
-    getContent().commands.find((cmd) => cmd.id === commandID)?.steps;
+    database.commands.find((cmd) => cmd.id === commandID)?.steps;
   const calculatedCommandOutput = useMemo<string>(
     () => calculateCommandOutput(steps!),
     [steps]

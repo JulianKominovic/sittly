@@ -3,7 +3,7 @@ function findNextTabStop() {
   let i = 0;
   while (i < LIMIT) {
     const found = document.elementFromPoint(i, i);
-    const rightCandidate = Number(found?.tabIndex) >= 0;
+    const rightCandidate = Number((found as HTMLElement)?.tabIndex) >= 0;
     if (found && rightCandidate) return found;
     i++;
   }
@@ -12,7 +12,7 @@ function findNextTabStop() {
 export default () => {
   const id = setTimeout(() => {
     const element = findNextTabStop();
-    element?.focus();
+    (element as HTMLElement)?.focus();
     element?.scrollIntoView({ block: "center", inline: "center" });
     clearTimeout(id);
   }, 10);

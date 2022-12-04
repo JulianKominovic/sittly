@@ -6,7 +6,6 @@ type ImageIcon = { imageSrc?: string; title?: string };
 type ReactComponentIcon = {
   icon: ListItemProps["icon"];
   iconSize: ListItemProps["iconSize"];
-  iconColor: ListItemProps["iconColor"];
 };
 type IconProps = ImageIcon & ReactComponentIcon;
 const Icon = (props: IconProps) => {
@@ -14,7 +13,6 @@ const Icon = (props: IconProps) => {
     <Avatar
       src={props.imageSrc}
       alt={props.title}
-      icon={props.icon}
       size="md"
       css={{
         fontSize: "$2xl",

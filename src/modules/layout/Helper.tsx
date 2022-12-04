@@ -110,7 +110,7 @@ const Helper = () => {
               }
             });
           });
-          if (result) result();
+          if (result) (result as any)();
         }}
       >
         {

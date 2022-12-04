@@ -1,23 +1,13 @@
-import { Container, Text } from "@nextui-org/react";
-import React, { useEffect, useState } from "react";
-import { FiCopy, FiDelete, FiEdit, FiPlus } from "react-icons/fi";
-import { IoCreate } from "react-icons/io5";
+import React, { useState } from "react";
+import { FiCopy, FiEdit, FiPlus } from "react-icons/fi";
 import { RiDeleteBin2Line } from "react-icons/ri";
-import { VscPreview, VscSearchStop } from "react-icons/vsc";
-import {
-  Navigate,
-  Route,
-  Routes,
-  useNavigate,
-  useNavigation,
-} from "react-router";
-import { Link } from "react-router-dom";
+import { VscPreview } from "react-icons/vsc";
+import { useNavigate } from "react-router";
 import useClipboard from "../../hooks/useClipboard";
 import useDatabase from "../../hooks/useDatabase";
 import useExecCommand from "../../hooks/useExecCommand";
 import useHelper from "../../hooks/useHelper";
 import useQuerybar from "../../hooks/useQuerybar";
-import { KEYS } from "../../lib/keys";
 import ListItem from "../../ui/list/ListItem";
 import NoResultsSearch from "../../ui/screen/NoResultsSearch";
 import calculateCommandOutput from "./logic/calculateCommandOutput";

@@ -109,7 +109,7 @@ const CreateOrEditCommand = () => {
   };
 
   const handleAddStep = () => {
-    setSteps((prev) => [...prev, addStep(steps.at(-1)?.index + 1)]);
+    setSteps((prev) => [...prev, addStep((steps.at(-1)?.index as number) + 1)]);
   };
   const handleRemoveStep = (index: number) => {
     setSteps((prev) => {

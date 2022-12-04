@@ -6,8 +6,6 @@ import { HiCommandLine, HiHome } from "react-icons/hi2";
 import { Navigate, RouteProps, useNavigate } from "react-router";
 import { RiSettingsFill } from "react-icons/ri";
 import useQuerybar from "../../hooks/useQuerybar";
-import { KEYS } from "../../lib/keys";
-
 import List from "../../ui/list";
 import Config from "../config";
 import Emojis from "../emojis";
@@ -15,10 +13,7 @@ import FlexDemo from "../demo";
 import useOpenLink from "../../hooks/useOpenLink";
 import Commands from "../commands";
 import useExecCommand from "../../hooks/useExecCommand";
-import { UseStatusStore } from "../../store/statusbarStore";
-import { TailwindColors } from "../../enum/TailwindColors";
 import CreateOrEditCommand from "../commands/create";
-import Preview from "../commands/preview";
 import PreviewIndex from "../commands/preview/PreviewIndex";
 import { FiLink } from "react-icons/fi";
 import LinkSaver from "../links";
@@ -28,10 +23,7 @@ type OnlyQuerybarModuleProps = {
     querybarValue: string;
   };
   commands: {
-    executeCommand: (cmd: string) => Promise<{
-      status: UseStatusStore["asyncStatus"];
-      data: any;
-    }>;
+    executeCommand: (cmd: string) => void;
   };
   browser: {
     openLink: (link: string) => Promise<void>;
@@ -55,7 +47,6 @@ type Manifest = {
   displayName: string;
   description: string;
   icon: React.ReactNode;
-  iconColor?: TailwindColors;
   entryPoint: OnlyQuerybarModule | StandardModule;
 };
 
@@ -74,7 +65,6 @@ export const INDEX: Manifest[] = [
         },
       ],
     },
-    iconColor: TailwindColors.blue,
   },
   {
     module: "Emojis",
@@ -90,7 +80,6 @@ export const INDEX: Manifest[] = [
         },
       ],
     },
-    iconColor: TailwindColors.amber,
   },
   {
     module: "Apps",
@@ -106,7 +95,6 @@ export const INDEX: Manifest[] = [
         },
       ],
     },
-    iconColor: TailwindColors.emerald,
   },
   {
     module: "Commands",
@@ -143,7 +131,6 @@ export const INDEX: Manifest[] = [
         },
       ],
     },
-    iconColor: TailwindColors.indigo,
   },
   {
     module: "Links",
@@ -159,7 +146,6 @@ export const INDEX: Manifest[] = [
         },
       ],
     },
-    iconColor: TailwindColors.indigo,
   },
   {
     module: "Run command",
@@ -173,7 +159,6 @@ export const INDEX: Manifest[] = [
       },
       triggerWord: "/",
     },
-    iconColor: TailwindColors.orange,
   },
   {
     module: "Settings",
@@ -189,7 +174,6 @@ export const INDEX: Manifest[] = [
         },
       ],
     },
-    iconColor: TailwindColors.red,
   },
 ];
 const Index = () => {
@@ -198,7 +182,7 @@ const Index = () => {
   const { openLink } = useOpenLink();
   const { executeCommand } = useExecCommand();
 
-  const DEFAULT_ITEM = {
+  const DEFAULT_ITEM: Manifest = {
     icon: "🔍",
     displayName: "Google",
     module: "Google",
@@ -206,7 +190,7 @@ const Index = () => {
     entryPoint: {
       onlyQuerybarFuncion: true,
       triggerWord: "g:",
-      querybarFunction: ({ querybar, browser }) => {
+      querybarFunction: ({ querybar, browser }: any) => {
         browser.openLink(
           `https://google.com/search?q=${querybar.querybarValue}`
         );
@@ -246,7 +230,6 @@ const Index = () => {
           key={item.module + index}
           title={item.displayName}
           subtitle={item.description}
-          iconColor={item.iconColor}
           icon={item.icon}
           action={{
             callback: () => {

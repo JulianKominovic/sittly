@@ -19,7 +19,7 @@ const FooterBreadcumbItem = ({ to, label, isFirstItem }: Props) => {
       tabIndex={-1}
     >
       {moduleMatching?.icon
-        ? React.cloneElement(moduleMatching?.icon, {
+        ? React.cloneElement(moduleMatching.icon as React.ReactElement, {
             className: "text-base mr-2",
           })
         : null}

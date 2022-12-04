@@ -1,13 +1,10 @@
 import React from "react";
-import { BsAlarm, BsFillPauseBtnFill } from "react-icons/bs";
-import { FiCopy } from "react-icons/fi";
-import Flex from "../../ui/containers/Flex";
+import { BsAlarm } from "react-icons/bs";
 import Divider from "../../ui/decoration/Divider";
 import List from "../../ui/list";
 import InputText from "../../ui/form/InputText";
 import InputTextArea from "../../ui/form/InputTextArea";
 import InputSelect from "../../ui/form/InputSelect";
-import { KEYS } from "../../lib/keys";
 import InputCheckbox from "../../ui/form/InputCheckbox";
 import InputRadio from "../../ui/form/InputRadio";
 import useAsync from "../../hooks/useAsync";
@@ -17,27 +14,8 @@ const TestComp = () => {
 
   return (
     <List.Item
-      helperActions={[
-        {
-          callback: () => console.log("funciona el helper"),
-          explanation: "Copiar",
-          subtitle: "Copia esta app a tu portapapeles",
-          keys: [KEYS.ControlLeft, KEYS.keyC],
-          icon: <FiCopy />,
-          title: "Copiar",
-        },
-        {
-          callback: () => console.log("funciona el helper"),
-          explanation: "Pegar",
-          subtitle: "Pegar esta app a tu portapapeles",
-          keys: [KEYS.ControlLeft, KEYS.keyV],
-          icon: <BsFillPauseBtnFill />,
-          title: "Copiar",
-        },
-      ]}
-      id={Math.random().toString()}
       action={{
-        callback: (props) => {
+        callback: () => {
           for (let index = 0; index < 20; index++) {
             doAsyncOperation(
               new Promise((res, rej) => {
@@ -45,90 +23,71 @@ const TestComp = () => {
                   Math.random() > 0.5
                     ? res({ hola: "hola" })
                     : rej({ hola: "hola" });
-                }, crypto.getRandomValues(new Uint16Array(1)));
+                }, crypto.getRandomValues(new Uint16Array(1)) as any);
               })
             ).then((res) => console.log(res));
           }
         },
         explanation: "Detalles",
-        keys: [KEYS.Enter],
+        keys: ["Enter"],
       }}
       title="List item"
       subtitle="list item again"
       icon={<BsAlarm />}
-    >
-      <div className="flex items-center justify-between gap-2 mb-1 hover:background-secondary hover:outline-gray-700 rounded-lg hover:outline hover:outline-1 p-2 text-sm w-full focus:outline focus:outline-1 focus:outline-gray-700 focus:border-none">
-        <p>Flame</p>
-      </div>
-    </List.Item>
+    ></List.Item>
   );
 };
 
 const TestCompX = () => (
   <List.Item
-    id={Math.random().toString()}
     action={{
-      callback: (props) => console.log(props),
+      callback: () => console.log("CLICK"),
       explanation: "Detalles",
-      keys: [KEYS.Enter],
+      keys: ["Enter"],
     }}
     title="List item"
     subtitle="list item again"
     icon={<BsAlarm />}
-  >
-    <div className="flex items-center justify-between gap-2 mb-1 hover:background-secondary hover:outline-gray-700 rounded-lg hover:outline hover:outline-1 p-2 text-sm w-full focus:outline focus:outline-1 focus:outline-gray-700 focus:border-none">
-      <p>Flame</p>
-    </div>
-  </List.Item>
+  ></List.Item>
 );
 
 const OPTIONS = [
   {
     value: "BMW",
-    display: () => <p>😁 BMW</p>,
+    label: "😁 BMW",
+    onClick: () => {},
   },
   {
     value: "MERCEDES",
-    display: () => <p>😁 MERCEDES</p>,
+    label: "😁 MERCEDES",
+    onClick: () => {},
   },
 ];
 
-const FlexDemo = ({}: Props) => {
+const FlexDemo = ({}: {}) => {
   const { doAsyncOperation } = useAsync();
   return (
     <>
       <List.Root>
-        <Divider
-          label="Last executed"
-          styles={{
-            marginBottom: "mb-3",
-            marginTop: "mt-3",
+        <Divider label="Last executed" marginBottom={2} marginTop={2} />
+        <TestComp />
+        <Divider label="Frecuentes" marginBottom={2} marginTop={2} />
+        <TestComp />
+        <TestComp />
+        <TestComp />
+        <Divider label="Procesos" marginBottom={2} marginTop={2} />
+        <TestComp />
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "1rem",
           }}
-        />
-        <TestComp />
-        <Divider
-          label="Frecuentes"
-          styles={{
-            marginBottom: "mb-3",
-            marginTop: "mt-3",
-          }}
-        />
-        <TestComp />
-        <TestComp />
-        <TestComp />
-        <Divider
-          label="Procesos"
-          styles={{
-            marginBottom: "mb-3",
-            marginTop: "mt-3",
-          }}
-        />
-        <TestComp />
-        <Flex>
+        >
           <TestCompX />
           <TestCompX />
           <TestCompX />
-        </Flex>
+        </div>
       </List.Root>
       <InputText
         id="test"
@@ -164,13 +123,7 @@ const FlexDemo = ({}: Props) => {
           },
         ]}
       />
-      <InputSelect
-        id="tt"
-        label="Select test"
-        onChange={(e) => console.log(e)}
-        defaultValue={"BMW"}
-        options={OPTIONS}
-      />
+      <InputSelect label="Select test" initialValue={"BMW"} options={OPTIONS} />
       <InputTextArea
         id="test"
         label="Testing label"

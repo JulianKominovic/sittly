@@ -1,9 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "animate.css";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
-import { createTheme, NextUIProvider } from "@nextui-org/react";
 
 import { globalCss } from "@nextui-org/react";
 
