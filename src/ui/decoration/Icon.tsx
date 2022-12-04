@@ -14,6 +14,7 @@ const Icon = (props: IconProps) => {
       src={props.imageSrc}
       alt={props.title}
       size="md"
+      icon={props.icon as any}
       css={{
         fontSize: "$2xl",
       }}
