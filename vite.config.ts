@@ -8,6 +8,8 @@ import renderer from "vite-plugin-electron-renderer";
 import pkg from "./package.json";
 
 rmSync(path.join(__dirname, "dist-electron"), { recursive: true, force: true });
+rmSync(path.join(__dirname, "dist"), { recursive: true, force: true });
+rmSync(path.join(__dirname, "release"), { recursive: true, force: true });
 
 // https://vitejs.dev/config/
 export default defineConfig({

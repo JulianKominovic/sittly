@@ -181,15 +181,16 @@ app.on("activate", () => {
 });
 
 app.on("will-quit", () => {
-  // Unregister a shortcut.
   globalShortcut.unregister(SHOW_APP_SHORCUT);
 
-  // Unregister all shortcuts.
   globalShortcut.unregisterAll();
 });
 
 ipcMain.on("hide-window", (evt, arg) => {
   win?.hide();
+});
+ipcMain.on("close-app", (evt, arg) => {
+  app.exit(0);
 });
 ipcMain.on("run-command", (evt, arg) => {
   exec(`gnome-terminal --command="bash -c '${arg}; $SHELL'"`);

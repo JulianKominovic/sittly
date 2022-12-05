@@ -25,6 +25,7 @@ const KeyboardHandlerComponent = () => {
   const asyncStatus = useStatusStore((state) => state.asyncStatus);
 
   useEffect(() => {
+    navigation("/");
     ipcRenderer.on("location-change", (event, route) => {
       navigation(route);
     });

@@ -10,7 +10,7 @@ const useClipboard = () => {
       write(text);
       ipcRenderer.send(
         "run-command-exec",
-        "xdotool key --clearmodifiers ctrl+v"
+        "xdotool key --clearmodifiers ctrl+shift+v"
       );
     },
   };

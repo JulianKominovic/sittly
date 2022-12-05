@@ -1,6 +1,8 @@
 import { changeTheme, Dropdown, useTheme } from "@nextui-org/react";
+import { ipcRenderer } from "electron";
 import { useEffect } from "react";
 import {
+  IoExitOutline,
   IoMoon,
   IoReturnDownBack,
   IoReturnDownForward,
@@ -93,6 +95,7 @@ const Helper = () => {
         }}
         onAction={(key) => {
           let result: undefined | (() => void) = undefined;
+          if (key === "exit") return ipcRenderer.send("close-app");
           if (key === "go-back")
             return navigation("../", {
               relative: "path",
@@ -166,6 +169,23 @@ const Helper = () => {
             icon={isDark ? <IoSunny /> : <IoMoon />}
           >
             Cambiar a tema {isDark ? "claro" : "oscuro"}
+          </Dropdown.Item>
+        </Dropdown.Section>
+        <Dropdown.Section
+          title="Aplicaciones"
+          aria-label="nav-buttons-container"
+        >
+          <Dropdown.Item
+            css={{
+              my: "$4",
+            }}
+            key="exit"
+            description="Salir definitivamente de la aplicación"
+            icon={<IoExitOutline />}
+            textColor="error"
+            color="error"
+          >
+            Salir de la app
           </Dropdown.Item>
         </Dropdown.Section>
       </Dropdown.Menu>
