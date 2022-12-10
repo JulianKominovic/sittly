@@ -133,6 +133,7 @@ function ListItem({
         as="div"
         css={{
           p: "0",
+          w: "fit-content",
         }}
         className="keys-tip"
       >

@@ -89,6 +89,7 @@ const Helper = () => {
           maxH: "200px",
           mb: "$14",
           pb: "$14",
+          w: "400px",
           "[aria-label='nav-buttons-container']": {
             paddingBlockEnd: "$4",
           },
@@ -130,7 +131,7 @@ const Helper = () => {
                     ?.map((k) => KeyCodeToVisualKey[k])
                     .join(" ")}
                 >
-                  {item.children}
+                  {null}
                 </Dropdown.Item>
               ))}
             </Dropdown.Section>

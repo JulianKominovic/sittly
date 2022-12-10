@@ -15,8 +15,9 @@ import Commands from "../commands";
 import useExecCommand from "../../hooks/useExecCommand";
 import CreateOrEditCommand from "../commands/create";
 import PreviewIndex from "../commands/preview/PreviewIndex";
-import { FiLink } from "react-icons/fi";
+import { FiFile, FiLink } from "react-icons/fi";
 import LinkSaver from "../links";
+import FileManager from "../file-manager";
 
 type OnlyQuerybarModuleProps = {
   querybar: {
@@ -143,6 +144,21 @@ export const INDEX: Manifest[] = [
         {
           index: true,
           element: <LinkSaver />,
+        },
+      ],
+    },
+  },
+  {
+    module: "Archivos",
+    displayName: "Archivos",
+    description: "Encuentra tus archivos",
+    icon: <FiFile />,
+    entryPoint: {
+      onlyQuerybarFuncion: false,
+      routes: [
+        {
+          index: true,
+          element: <FileManager />,
         },
       ],
     },

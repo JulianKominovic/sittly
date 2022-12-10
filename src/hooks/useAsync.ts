@@ -1,3 +1,4 @@
+import CancelablePromise, { cancelable } from "cancelable-promise";
 import { useCallback, useMemo } from "react";
 import {
   AsyncStatusEnum,
@@ -29,8 +30,38 @@ const useAsync = () => {
     },
     []
   );
+  const doAsyncAbortableOperation = useCallback(
+    async <T>(
+      asyncFuncion: Promise<T>,
+      controllerSignal: AbortSignal
+    ): Promise<{
+      status: UseStatusStore["asyncStatus"];
+      data: T | null;
+    }> => {
+      const operationId = addAsyncOperation();
+      return new Promise((res, rej) => {
+        controllerSignal.addEventListener("abort", () => {
+          endAsyncOperation(operationId, AsyncStatusEnum.ABORTED);
+          rej({ data: "ABORTED", status: AsyncStatusEnum.ABORTED });
+        });
 
-  return { doAsyncOperation };
+        asyncFuncion
+          .then((response) => {
+            endAsyncOperation(operationId, AsyncStatusEnum.SUCCESS);
+            if (controllerSignal.aborted) return rej("ABORTED");
+            res({ data: response, status: AsyncStatusEnum.SUCCESS });
+          })
+          .catch((err) => {
+            endAsyncOperation(operationId, AsyncStatusEnum.FAIL);
+            if (controllerSignal.aborted) return rej("ABORTED");
+            rej({ data: err as T, status: AsyncStatusEnum.FAIL });
+          });
+      });
+    },
+    []
+  );
+
+  return { doAsyncOperation, doAsyncAbortableOperation };
 };
 
 export default useAsync;

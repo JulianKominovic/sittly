@@ -55,7 +55,6 @@ const Emojis = () => {
               textColor: "success",
               color: "success",
               description: "Pega este emoji en donde estés",
-              children: <></>,
               title: "Pegar emoji en la ventana actual",
               onClick: () => {
                 updateContent((prev) => {
@@ -138,7 +137,8 @@ const Emojis = () => {
     <VirtualizedList
       list={
         [
-          ...(database?.length > 0
+          ...(database?.length > 0 &&
+          database?.filter((em) => em.description.includes(value))?.length > 0
             ? [
                 {
                   divider: true,
@@ -149,16 +149,21 @@ const Emojis = () => {
               ]
             : []),
           ...database
+            .filter((em) => em.description.includes(value))
             .map((em) => {
               return emojiRenderer(em as any);
             })
             .sort((a, b) => b.numberOfTimesUsed - a.numberOfTimesUsed),
-          {
-            divider: true,
-            label: "Emojis",
-            marginTop: 8,
-            marginBottom: 8,
-          },
+          ...(memoizedEmojis.length > 0
+            ? [
+                {
+                  divider: true,
+                  label: "Emojis",
+                  marginTop: 8,
+                  marginBottom: 8,
+                },
+              ]
+            : []),
           ...memoizedEmojis.map(({ obj: item }) => {
             return emojiRenderer(item as any);
           }),

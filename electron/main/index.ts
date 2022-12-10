@@ -27,6 +27,13 @@ import { release } from "os";
 import { join } from "path";
 import path from "path";
 import { exec } from "child_process";
+import fs from "fs/promises";
+import fsSync from "fs";
+import fsUtils from "nodejs-fs-utils";
+import os from "os";
+import asyncFolderWalker from "async-folder-walker";
+import fuzzysort from "fuzzysort";
+import { File } from "../types/file";
 
 const SHOW_APP_SHORCUT = "Ctrl+Alt+K";
 const EMOJI_SHORCUT = "Super+Ctrl+.";
@@ -192,9 +199,94 @@ ipcMain.on("hide-window", (evt, arg) => {
 ipcMain.on("close-app", (evt, arg) => {
   app.exit(0);
 });
+// COMMANDS
 ipcMain.on("run-command", (evt, arg) => {
   exec(`gnome-terminal --command="bash -c '${arg}; $SHELL'"`);
 });
 ipcMain.on("run-command-exec", (evt, arg) => {
   exec(`${arg}`);
+});
+
+//FILESYSTEM
+ipcMain.on("get-home-dir", (evt, filePath) => {
+  evt.reply("get-home-dir", {
+    status: "OK",
+    data: os.homedir(),
+  });
+});
+ipcMain.on("read-file", async (evt, filePath) => {
+  try {
+    const fileContent = await fs.readFile(filePath);
+    const fileInfo = await fs.stat(filePath);
+    evt.reply("read-file", {
+      status: "OK",
+      data: {
+        content: fileContent,
+        info: fileInfo,
+        path: filePath,
+        extension: path.extname(filePath),
+        name: path.basename(filePath).replace(path.extname(filePath), ""),
+      } as File,
+    });
+  } catch (err) {
+    console.log(err);
+    evt.reply("read-file", { status: "FAIL", data: err });
+  }
+});
+ipcMain.on("read-dir", async (evt, dir) => {
+  try {
+    console.log("INPUT", dir);
+    const files = await asyncFolderWalker.allFiles(dir, {
+      maxDepth: 0,
+      shaper: (all) =>
+        ({
+          extension: path.extname(all.basename),
+          name: all.basename,
+          path: all.filepath,
+        } as File),
+    });
+
+    console.log(files.length);
+    evt.reply("read-dir", {
+      status: "OK",
+      data: files as File[],
+    });
+  } catch (err) {
+    console.log(err);
+    evt.reply("read-dir", { status: "FAIL", data: err });
+  }
+});
+ipcMain.on("find-file", async (evt, filename) => {
+  try {
+    const files = await asyncFolderWalker.allFiles(path.resolve(os.homedir()), {
+      maxDepth: 3,
+    });
+    const names = files.map(
+      (f: string, i: number) =>
+        ({
+          name: path.basename(f).replace(path.extname(f), ""),
+          extension: path.extname(f),
+          index: i,
+          path: f,
+        } as File)
+    );
+    const found = fuzzysort
+      .go(filename, names, {
+        limit: 10,
+        all: false,
+        threshold: -100000,
+        key: "name",
+      })
+      .map((f) => {
+        return (f as any).obj;
+      });
+
+    evt.reply("find-file", {
+      status: "OK",
+      data: found,
+    });
+  } catch (err) {
+    console.log(err);
+    evt.reply("find-file", { status: "FAIL", data: err });
+  }
 });

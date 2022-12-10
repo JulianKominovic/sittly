@@ -6,14 +6,13 @@ import {
   createTheme,
   getDocumentTheme,
   NextUIProvider,
+  defaultTheme,
 } from "@nextui-org/react";
 
 const darkTheme = createTheme({
-  theme: "dark",
   type: "dark",
 });
 const lightTheme = createTheme({
-  theme: "light",
   type: "light",
 });
 

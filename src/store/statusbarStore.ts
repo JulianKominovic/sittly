@@ -4,6 +4,7 @@ export enum AsyncStatusEnum {
   IN_PROGRESS = "IN_PROGRESS",
   SUCCESS = "SUCCESS",
   FAIL = "FAIL",
+  ABORTED = "ABORTED",
   IDLE = "IDLE",
 }
 
@@ -14,7 +15,10 @@ export type UseStatusStore = {
   addAsyncOperation: () => string;
   endAsyncOperation: (
     id: string,
-    status: AsyncStatusEnum.FAIL | AsyncStatusEnum.SUCCESS
+    status:
+      | AsyncStatusEnum.FAIL
+      | AsyncStatusEnum.SUCCESS
+      | AsyncStatusEnum.ABORTED
   ) => void;
 };
 
@@ -38,7 +42,10 @@ export const useStatusStore = create<UseStatusStore>((set, get) => ({
   },
   endAsyncOperation: (
     id: string,
-    status: AsyncStatusEnum.FAIL | AsyncStatusEnum.SUCCESS
+    status:
+      | AsyncStatusEnum.FAIL
+      | AsyncStatusEnum.SUCCESS
+      | AsyncStatusEnum.ABORTED
   ) => {
     set((prev) => {
       const asyncOperations = prev.asyncOperations.filter(

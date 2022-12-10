@@ -1,7 +1,9 @@
 import React from "react";
-import { FiEdit, FiPlus } from "react-icons/fi";
+import { BsWindow } from "react-icons/bs";
+import { FiCopy, FiEdit, FiPlus } from "react-icons/fi";
 import { IoOpen } from "react-icons/io5";
 import { RiDeleteBin2Line } from "react-icons/ri";
+import useClipboard from "../../../hooks/useClipboard";
 import useOpenLink from "../../../hooks/useOpenLink";
 import { HelperAction } from "../../../store/helperStore";
 import Divider from "../../../ui/decoration/Divider";
@@ -24,6 +26,7 @@ const LinkList = ({
   updateContent,
 }: Props) => {
   const { openLink } = useOpenLink();
+  const { write, pasteToCurrentWindow } = useClipboard();
   return (
     <>
       {Object.entries(database).map(([key, value], index) => {
@@ -50,6 +53,7 @@ const LinkList = ({
                       explanation: "Abrir",
                       keys: ["Enter"],
                     }}
+                    subtitle={v.url}
                     onFocus={() => {
                       setHelperOptions([
                         {
@@ -110,6 +114,33 @@ const LinkList = ({
                               },
                               children: <></>,
                               keyboardShorcut: ["ControlLeft", "Delete"],
+                            },
+                          ],
+                        },
+                        {
+                          title: "Clipboard",
+                          items: [
+                            {
+                              title: "Copiar",
+                              color: "primary",
+                              textColor: "primary",
+                              key: "copy",
+                              description: `Copiar URL al portapapeles.`,
+                              icon: <FiCopy />,
+                              onClick: () => {
+                                write(v.url);
+                              },
+                            },
+                            {
+                              title: "Pegar en la ventana actual",
+                              color: "primary",
+                              textColor: "primary",
+                              key: "past-to-window",
+                              description: `Pegar la url en la ventana actual.`,
+                              icon: <BsWindow />,
+                              onClick: () => {
+                                pasteToCurrentWindow(v.url);
+                              },
                             },
                           ],
                         },

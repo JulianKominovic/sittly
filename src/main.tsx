@@ -9,6 +9,7 @@ const globalStyles = globalCss({
   button: {
     border: "none",
   },
+
   "*::-webkit-scrollbar": {
     width: 10,
   },

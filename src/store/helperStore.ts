@@ -11,13 +11,12 @@ export type ColorVariants =
   | "default";
 export type HelperAction = {
   title: string;
-  items: (DropdownItemBaseProps<object> & {
+  items: (Pick<DropdownItemBaseProps<object>, "css"> & {
     onClick: () => void;
     key: string;
     title: string;
     description: string;
     icon: React.ReactNode;
-    children?: React.ReactNode | undefined;
     keyboardShorcut?: KeyCodes[];
     textColor?: ColorVariants;
     color?: ColorVariants;

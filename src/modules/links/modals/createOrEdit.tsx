@@ -70,7 +70,7 @@ const Create = ({
           updateContent((prev) => ({
             ...prev,
             [newLink.category]: [
-              ...(prev[newLink.category] ? prev[newLink.category] : []),
+              ...(prev?.[newLink.category] ? prev[newLink.category] : []),
               newLink,
             ],
           }));
