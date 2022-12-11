@@ -28,12 +28,11 @@ import { join } from "path";
 import path from "path";
 import { exec } from "child_process";
 import fs from "fs/promises";
-import fsSync from "fs";
-import fsUtils from "nodejs-fs-utils";
 import os from "os";
-import asyncFolderWalker from "async-folder-walker";
 import fuzzysort from "fuzzysort";
-import { File } from "../types/file";
+import { getTypeOfFile } from "../utils/fs/getTypeOfFile";
+import { File, FileWithContent } from "../types/file";
+import { walk } from "../utils/fs/walkdir";
 
 const SHOW_APP_SHORCUT = "Ctrl+Alt+K";
 const EMOJI_SHORCUT = "Super+Ctrl+.";
@@ -68,8 +67,9 @@ async function createWindow() {
     //END - ACTIVATE ON PROD
     transparent: true,
     frame: false,
-    maxHeight: 400,
-    height: 400,
+    maxHeight: 500,
+    height: 500,
+    width: 1000,
     resizable: false,
     center: true,
     roundedCorners: true,
@@ -204,7 +204,7 @@ ipcMain.on("run-command", (evt, arg) => {
   exec(`gnome-terminal --command="bash -c '${arg}; $SHELL'"`);
 });
 ipcMain.on("run-command-exec", (evt, arg) => {
-  exec(`${arg}`);
+  exec(arg);
 });
 
 //FILESYSTEM
@@ -216,17 +216,26 @@ ipcMain.on("get-home-dir", (evt, filePath) => {
 });
 ipcMain.on("read-file", async (evt, filePath) => {
   try {
-    const fileContent = await fs.readFile(filePath);
+    if (!filePath) throw new Error("No file path provided");
     const fileInfo = await fs.stat(filePath);
+
+    let fileContent: Buffer = Buffer.from("");
+    const fileType = getTypeOfFile(path.extname(filePath));
+    if (fileType === "IMAGE" || fileType === "HTML" || fileType === "TEXT") {
+      fileContent = await fs.readFile(filePath);
+    }
+
     evt.reply("read-file", {
       status: "OK",
       data: {
         content: fileContent,
+        utf8: fileContent?.toString("latin1"),
+        base64: fileContent?.toString("base64"),
         info: fileInfo,
         path: filePath,
         extension: path.extname(filePath),
         name: path.basename(filePath).replace(path.extname(filePath), ""),
-      } as File,
+      } as FileWithContent,
     });
   } catch (err) {
     console.log(err);
@@ -235,21 +244,35 @@ ipcMain.on("read-file", async (evt, filePath) => {
 });
 ipcMain.on("read-dir", async (evt, dir) => {
   try {
-    console.log("INPUT", dir);
-    const files = await asyncFolderWalker.allFiles(dir, {
-      maxDepth: 0,
-      shaper: (all) =>
-        ({
-          extension: path.extname(all.basename),
-          name: all.basename,
-          path: all.filepath,
-        } as File),
+    const files: File[] = (await walk(dir)).sort((a, b) => {
+      if (a?.name?.startsWith(".")) return 1;
+      return -1;
     });
 
-    console.log(files.length);
+    const allFiles = await Promise.allSettled(
+      files.map(async (fileprops: File): Promise<FileWithContent> => {
+        let fileContent: Buffer = Buffer.from("");
+        const fileType = getTypeOfFile(path.extname(fileprops.path));
+        if (
+          fileType === "IMAGE" ||
+          fileType === "HTML" ||
+          fileType === "TEXT"
+        ) {
+          fileContent = await fs.readFile(fileprops.path);
+        }
+
+        return {
+          ...fileprops,
+          content: fileContent,
+          utf8: fileContent?.toString("latin1"),
+          base64: fileContent?.toString("base64"),
+        };
+      })
+    );
+
     evt.reply("read-dir", {
       status: "OK",
-      data: files as File[],
+      data: allFiles.map((f) => f.value),
     });
   } catch (err) {
     console.log(err);
@@ -258,24 +281,15 @@ ipcMain.on("read-dir", async (evt, dir) => {
 });
 ipcMain.on("find-file", async (evt, filename) => {
   try {
-    const files = await asyncFolderWalker.allFiles(path.resolve(os.homedir()), {
-      maxDepth: 3,
-    });
-    const names = files.map(
-      (f: string, i: number) =>
-        ({
-          name: path.basename(f).replace(path.extname(f), ""),
-          extension: path.extname(f),
-          index: i,
-          path: f,
-        } as File)
+    const files = (await walk(path.resolve(os.homedir()), 3)).filter(
+      (f) => f?.name
     );
     const found = fuzzysort
-      .go(filename, names, {
+      .go(filename, files, {
         limit: 10,
         all: false,
-        threshold: -100000,
         key: "name",
+        threshold: -100000,
       })
       .map((f) => {
         return (f as any).obj;

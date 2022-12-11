@@ -1,10 +1,15 @@
-const fs = require("fs/promises");
-const path = require("path");
+import fs from "fs/promises";
+import path from "path";
+import { File } from "../../types/file";
 
-async function walk(dir = "/home/julian", maxDepth = 0, currentDepth = 0) {
+export async function walk(
+  dir: string,
+  maxDepth = 0,
+  currentDepth = 0
+): Promise<File[]> {
   let files = await fs.readdir(dir);
   files = await Promise.all(
-    files.map(async (file) => {
+    files.map(async (file): Promise<File> => {
       const filePath = path.join(dir, file);
       const stats = await fs.stat(filePath).catch(() => null);
       if (currentDepth >= maxDepth)
@@ -12,6 +17,7 @@ async function walk(dir = "/home/julian", maxDepth = 0, currentDepth = 0) {
           path: filePath,
           extension: path.extname(filePath),
           name: path.basename(filePath).replace(path.extname(filePath), ""),
+          info: await fs.stat(filePath).catch(() => null),
         };
       if (stats?.isDirectory())
         return walk(filePath, maxDepth, currentDepth + 1);
@@ -20,13 +26,10 @@ async function walk(dir = "/home/julian", maxDepth = 0, currentDepth = 0) {
           path: filePath,
           extension: path.extname(filePath),
           name: path.basename(filePath).replace(path.extname(filePath), ""),
+          info: await fs.stat(filePath),
         };
     })
   );
 
   return files.reduce((all, folderContents) => all.concat(folderContents), []);
 }
-
-walk().then((files) => {
-  console.log(files);
-});

@@ -1,4 +1,5 @@
-import { useQuerybarStore } from '../store/querybarStore';
+import { useEffect } from "react";
+import { useQuerybarStore } from "../store/querybarStore";
 
 const useQuerybar = () => {
   const setValue = useQuerybarStore((state) => state.setValue);
@@ -9,7 +10,7 @@ const useQuerybar = () => {
     setValue,
     value,
     placeholder,
-    setPlaceholder
+    setPlaceholder,
   };
 };
 

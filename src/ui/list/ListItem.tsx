@@ -17,7 +17,9 @@ export type Action = {
   keys: KeyCodes[];
 };
 export type ListItemProps = {
+  id: string;
   title: string;
+  largeSize?: "FULL" | "HALF";
   subtitle?: string;
   imageSrc?: string;
   action?: Action;
@@ -42,6 +44,7 @@ function ListItem({
   onBlur,
   onFocus,
   mx = 0,
+  largeSize,
   ...props
 }: ListItemProps) {
   const keystrokeRef = useRef<HTMLDivElement | null>(null);
@@ -58,6 +61,7 @@ function ListItem({
         mx: `$${mx}`,
         p: "$2",
         h: "auto",
+
         ">span": {
           display: "flex",
           w: "100%",
@@ -87,6 +91,9 @@ function ListItem({
           display: "flex",
           alignItems: "center",
           px: "0",
+          gap: "$4",
+          mx: "0",
+          mr: "auto",
         }}
       >
         <Icon
@@ -103,16 +110,22 @@ function ListItem({
             alignItems: "baseline",
             justifyContent: "flex-start",
             justifyItems: "baseline",
-            w: "fit-content",
             flexWrap: "nowrap",
             mx: "$0",
+            px: "0",
             flexDirection: "column",
+            width: largeSize === "HALF" ? "50%" : "fit-content",
           }}
         >
           <Text
             small
             css={{
               color: "$accents7",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              width: "100%",
+              textAlign: "left",
             }}
           >
             {firstLetterUpperCase(subtitle) || "ㅤ"}
@@ -122,6 +135,11 @@ function ListItem({
             css={{
               lineHeight: "$sm",
               color: "$accents9",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              width: "100%",
+              textAlign: "left",
             }}
           >
             {firstLetterUpperCase(title)}
@@ -133,12 +151,12 @@ function ListItem({
         as="div"
         css={{
           p: "0",
-          w: "fit-content",
         }}
         className="keys-tip"
       >
         {action ? (
           <Container
+            className="action-keystroke"
             as="aside"
             css={{
               display: "flex",

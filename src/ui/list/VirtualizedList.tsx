@@ -1,8 +1,8 @@
-import { Container } from "@nextui-org/react";
-import React, { useRef } from "react";
+import { Container, CSS } from "@nextui-org/react";
+import React, { useEffect, useRef, useState } from "react";
 import { Virtuoso } from "react-virtuoso";
 import Divider from "../decoration/Divider";
-import ListItem, { ListItemProps } from "./ListItem";
+import ListItem, { Action, ListItemProps } from "./ListItem";
 
 type Divider = {
   divider: true;
@@ -11,9 +11,10 @@ type Divider = {
   marginTop?: number;
   marginBottom?: number;
 };
-type ListItem = ListItemProps | Divider;
+type ListItem = (ListItemProps | Divider) & { id: string };
 type ListProps = {
   list: ListItem[];
+  css: CSS;
 };
 
 const Row = (_: number, data: ListItem) =>
@@ -26,7 +27,7 @@ const Row = (_: number, data: ListItem) =>
 type VirtuosoRef = HTMLElement & {
   scrollToIndex: ({ index, align }: { index: number; align: "center" }) => void;
 };
-const List = ({ list }: ListProps) => {
+const List = ({ list, css }: ListProps) => {
   const virtuosoRef = useRef<VirtuosoRef | undefined>(undefined);
   if (virtuosoRef.current !== null) {
     virtuosoRef.current?.scrollToIndex({
@@ -37,21 +38,26 @@ const List = ({ list }: ListProps) => {
 
   return (
     <Container
+      className="virtualized-list"
       css={{
         m: "0",
         p: "0",
+        "[data-virtuoso-scroller='true']": {
+          position: "sticky",
+        },
         "[data-test-id='virtuoso-item-list']": {
           ">*": {
             mx: "$2",
           },
         },
+        ...css,
       }}
     >
       <Virtuoso
         react18ConcurrentRendering
         tabIndex={-1}
         style={{
-          height: 284,
+          height: 420,
           width: "100%",
         }}
         totalCount={list.length}
@@ -64,10 +70,12 @@ const List = ({ list }: ListProps) => {
 };
 
 const MemoizedList = React.memo(List, ({ list }, { list: newList }) => {
-  return (
+  const conditions =
     list.length === newList.length &&
-    list.every((item, index) => item === newList.at(index))
-  );
+    list.every((item, index) => {
+      return item === newList[index];
+    });
+  return conditions;
 });
 
 export default MemoizedList;

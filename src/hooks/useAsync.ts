@@ -33,17 +33,21 @@ const useAsync = () => {
   const doAsyncAbortableOperation = useCallback(
     async <T>(
       asyncFuncion: Promise<T>,
-      controllerSignal: AbortSignal
+      controllerSignal: AbortSignal,
+      onAbort?: () => void
     ): Promise<{
       status: UseStatusStore["asyncStatus"];
       data: T | null;
     }> => {
       const operationId = addAsyncOperation();
       return new Promise((res, rej) => {
-        controllerSignal.addEventListener("abort", () => {
+        const handleAbort = () => {
+          controllerSignal.removeEventListener("abort", handleAbort);
           endAsyncOperation(operationId, AsyncStatusEnum.ABORTED);
           rej({ data: "ABORTED", status: AsyncStatusEnum.ABORTED });
-        });
+          onAbort && onAbort();
+        };
+        controllerSignal.addEventListener("abort", handleAbort);
 
         asyncFuncion
           .then((response) => {

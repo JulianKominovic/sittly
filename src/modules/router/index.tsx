@@ -26,11 +26,9 @@ function Searchbar() {
       <Container
         as="main"
         css={{
-          overflowY: "auto",
-          overflowX: "visible",
           px: "$8",
           py: "$4",
-          maxHeight: "300px",
+          maxHeight: "390px",
           maxW: "800px",
         }}
       >

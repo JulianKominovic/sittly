@@ -7,3 +7,5 @@ export type File = {
   content?: Buffer;
   info?: Stats;
 };
+
+export type FileWithContent = File & { utf8: string; base64: string };
