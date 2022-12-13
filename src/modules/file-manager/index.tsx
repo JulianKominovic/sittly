@@ -1,18 +1,20 @@
 import { Container } from "@nextui-org/react";
 import React, { useEffect, useMemo, useState } from "react";
-import { AiFillFolderOpen } from "react-icons/ai";
+import { AiFillFolderOpen, AiOutlineDatabase } from "react-icons/ai";
 import { FiCopy } from "react-icons/fi";
 import { RiFolderReceivedLine } from "react-icons/ri";
 import { VscMultipleWindows, VscRunAll } from "react-icons/vsc";
 import { getIconForFile, getIconForFolder } from "vscode-icons-js";
 import { File, FileWithContent } from "../../../electron/types/file";
 import useClipboard from "../../hooks/useClipboard";
+import useDatabase from "../../hooks/useDatabase";
 import { useDebounce } from "../../hooks/useDebounce";
 import useFileSystem from "../../hooks/useFileSystem";
 import useHelper from "../../hooks/useHelper";
 import useOpenApp from "../../hooks/useOpenApp";
 import useQuerybar from "../../hooks/useQuerybar";
 import { HelperAction } from "../../store/helperStore";
+import { LoadingEnum } from "../../store/loadingStore";
 import { AsyncStatusEnum } from "../../store/statusbarStore";
 import ListItem, { ListItemProps } from "../../ui/list/ListItem";
 import VirtualizedList from "../../ui/list/VirtualizedList";
@@ -38,12 +40,14 @@ const FileManager = (props: Props) => {
   const { setHelperOptions } = useHelper(null);
   const { writeImage, write, writeHTML, pasteToCurrentWindow } = useClipboard();
   const [index, setIndex] = useState(-1);
+  const { database, updateContent } =
+    useDatabase<{ homedir: string | undefined }>();
 
   const getDirs = async (path: string) => {
     clearTimeout(timer as NodeJS.Timeout);
     const dirs = await getDirectoryFiles(path as string);
 
-    if (dirs.status === AsyncStatusEnum.SUCCESS) {
+    if (dirs.status === LoadingEnum.SUCCESS) {
       setFiles(SortByDate(dirs.data));
     }
     rescueFocusedElement();
@@ -55,7 +59,7 @@ const FileManager = (props: Props) => {
       if (value) {
         findFile(value)
           .then((res) => {
-            if (res.status === AsyncStatusEnum.SUCCESS) {
+            if (res.status === LoadingEnum.SUCCESS) {
               setFiles(SortByDate(res.data));
             }
           })
@@ -76,9 +80,13 @@ const FileManager = (props: Props) => {
   }, [value]);
 
   useEffect(() => {
-    getHomedir().then((res) => {
-      getDirs(res);
-    });
+    if (database?.homedir) {
+      getDirs(database.homedir);
+    } else {
+      getHomedir().then((res) => {
+        getDirs(res);
+      });
+    }
   }, []);
 
   const goBack = (path: string) => {
@@ -91,27 +99,24 @@ const FileManager = (props: Props) => {
 
   const listItems = files?.map(
     ({ extension, name, path, utf8, content }, i): ListItemProps => {
-      const helperOptions: HelperAction = [
+      const navigationOptions: HelperAction = [
         {
-          title: "Acciones",
+          title: "Navegar",
           items: [
-            {
-              title: extension === "" ? "Ir hacia ahi" : "Abrir",
-              description:
-                extension === ""
-                  ? "Desplazarse hacia el directorio " + path
-                  : "Abrir el archivo " + name,
-              key: "enter",
-              color: "default",
-              icon: extension ? <VscRunAll /> : <AiFillFolderOpen />,
-              onClick: () => {
-                if (extension !== "") {
-                  openFile(path);
-                } else {
-                  getDirs(path);
-                }
-              },
-            },
+            ...(extension === ""
+              ? [
+                  {
+                    title: "Ir hacia ahi",
+                    description: "Desplazarse hacia el directorio " + path,
+                    key: "go-to-folder",
+                    color: "default",
+                    icon: <AiFillFolderOpen />,
+                    onClick: () => {
+                      getDirs(path);
+                    },
+                  },
+                ]
+              : []),
             ...(/\/home\/.*\/.+\//.test(path)
               ? ([
                   {
@@ -125,8 +130,26 @@ const FileManager = (props: Props) => {
                   },
                 ] as any)
               : []),
-            ...(extension !== ""
-              ? [
+          ],
+        },
+      ];
+
+      const actions: HelperAction =
+        extension !== ""
+          ? [
+              {
+                title: "Acciones",
+                items: [
+                  {
+                    title: "Abrir",
+                    description: "Abrir el archivo " + name,
+                    key: "open",
+                    color: "default",
+                    icon: <VscRunAll />,
+                    onClick: () => {
+                      openFile(path);
+                    },
+                  },
                   {
                     title: "Copiar contenido",
                     description:
@@ -170,10 +193,35 @@ const FileManager = (props: Props) => {
                       }
                     },
                   },
-                ]
-              : []),
-          ],
-        },
+                ],
+              },
+            ]
+          : [];
+
+      const helperOptions: HelperAction = [
+        ...navigationOptions,
+        ...actions,
+        ...(extension === ""
+          ? [
+              {
+                title: "Persistencia",
+                items: [
+                  {
+                    title: "Setear como directorio inicial",
+                    description:
+                      "Elegir este directorio como directorio inicial.",
+                    key: "save-to-db",
+                    icon: <AiOutlineDatabase />,
+                    onClick: () => {
+                      updateContent(() => ({
+                        homedir: path,
+                      }));
+                    },
+                  },
+                ],
+              },
+            ]
+          : []),
       ];
 
       return {

@@ -4,16 +4,56 @@ import {
   AiOutlineClose,
   AiOutlineLoading,
 } from "react-icons/ai";
+import { BsCircleFill } from "react-icons/bs";
+import { LoadingEnum } from "../../../store/loadingStore";
 import { AsyncStatusEnum } from "../../../store/statusbarStore";
 
 export const StatusWrapper = ({ children }: { children: React.ReactNode }) => (
   <Container>{children}</Container>
 );
 
-export const chooseRenderByStatus = (
-  status: AsyncStatusEnum,
-  operations: { id: string; status: AsyncStatusEnum }[]
-) => {
+const AsyncOperationStatusMessage = ({
+  InprogressOperations,
+  SucceedOperations,
+  FailedOperations,
+}: {
+  InprogressOperations: number;
+  SucceedOperations: number;
+  FailedOperations: number;
+}) => (
+  <Container
+    css={{
+      m: "0",
+      p: "0",
+      d: "flex",
+      alignItems: "center",
+      gap: "$4",
+      ".red": {
+        color: "$red600",
+      },
+      ".green": {
+        color: "$green600",
+      },
+      ".yellow": {
+        color: "$yellow600",
+      },
+    }}
+  >
+    <span className="yellow">{InprogressOperations}</span>
+    <AiOutlineLoading
+      style={{
+        animation: InprogressOperations ? "spinning 1s ease infinite" : "none",
+      }}
+      className={`inline-flex yellow ${InprogressOperations && "animate-spin"}`}
+    />
+    <span className="green"> {SucceedOperations}</span>
+    <AiOutlineCheck className="inline-flex green" />{" "}
+    <span className="red">{FailedOperations}</span>{" "}
+    <AiOutlineClose className="inline-flex red" />
+  </Container>
+);
+
+const AsyncOperation = ({ operations, status }: FooterStatus) => {
   const InprogressOperations = operations.filter(
     (op) => op.status === AsyncStatusEnum.IN_PROGRESS
   ).length;
@@ -24,7 +64,63 @@ export const chooseRenderByStatus = (
     (op) => op.status === AsyncStatusEnum.FAIL
   ).length;
 
-  const StatusMessage = () => (
+  if (status === AsyncStatusEnum.IN_PROGRESS)
+    return (
+      <StatusWrapper>
+        <p>
+          {
+            <AsyncOperationStatusMessage
+              InprogressOperations={InprogressOperations}
+              SucceedOperations={SucceedOperations}
+              FailedOperations={FailedOperations}
+            />
+          }
+        </p>
+      </StatusWrapper>
+    );
+  if (status === AsyncStatusEnum.SUCCESS)
+    return (
+      <StatusWrapper>
+        <p>
+          {
+            <AsyncOperationStatusMessage
+              InprogressOperations={InprogressOperations}
+              SucceedOperations={SucceedOperations}
+              FailedOperations={FailedOperations}
+            />
+          }
+        </p>
+      </StatusWrapper>
+    );
+  if (status === AsyncStatusEnum.FAIL)
+    return (
+      <StatusWrapper>
+        <p>
+          {
+            <AsyncOperationStatusMessage
+              InprogressOperations={InprogressOperations}
+              SucceedOperations={SucceedOperations}
+              FailedOperations={FailedOperations}
+            />
+          }
+        </p>
+      </StatusWrapper>
+    );
+  return null;
+};
+
+export type FooterStatus = {
+  status: AsyncStatusEnum;
+  operations: { id: string; status: AsyncStatusEnum }[];
+  shortOperations: {
+    id: string;
+    status: LoadingEnum;
+    statusMessage: string;
+  }[];
+};
+
+const ShortAsyncOperation = ({ shortOperations }: FooterStatus) => {
+  return (
     <Container
       css={{
         m: "0",
@@ -32,55 +128,19 @@ export const chooseRenderByStatus = (
         d: "flex",
         alignItems: "center",
         gap: "$4",
-        ".red": {
-          color: "$red600",
-        },
-        ".green": {
-          color: "$green600",
-        },
-        ".yellow": {
-          color: "$yellow600",
-        },
+        fontSize: "$sm",
       }}
     >
-      <span className="yellow">{InprogressOperations}</span>
-      <AiOutlineLoading
-        style={{
-          animation: InprogressOperations
-            ? "spinning 1s ease infinite"
-            : "none",
-        }}
-        className={`inline-flex yellow ${
-          InprogressOperations && "animate-spin"
-        }`}
-      />
-      <span className="green"> {SucceedOperations}</span>
-      <AiOutlineCheck className="inline-flex green" />{" "}
-      <span className="red">{FailedOperations}</span>{" "}
-      <AiOutlineClose className="inline-flex red" />
+      <BsCircleFill className="animation-beat" />{" "}
+      {shortOperations.at(-1)?.statusMessage}
     </Container>
   );
+};
 
-  if (status === AsyncStatusEnum.IN_PROGRESS)
-    return (
-      <StatusWrapper>
-        {/* <AiOutlineLoading className="text-yellow-500 animate-spin" /> */}
-        <p>{<StatusMessage />}</p>
-      </StatusWrapper>
-    );
-  if (status === AsyncStatusEnum.SUCCESS)
-    return (
-      <StatusWrapper>
-        {/* <AiOutlineCheck className="text-green-500" /> */}
-        <p>{<StatusMessage />}</p>
-      </StatusWrapper>
-    );
-  if (status === AsyncStatusEnum.FAIL)
-    return (
-      <StatusWrapper>
-        {/* <AiOutlineClose className="text-red-500" /> */}
-        <p>{<StatusMessage />}</p>
-      </StatusWrapper>
-    );
-  return null;
+export const FooterStatus = (props: FooterStatus) => {
+  if (props.shortOperations?.length > 0) {
+    return <ShortAsyncOperation {...props} />;
+  } else {
+    return <AsyncOperation {...props} />;
+  }
 };

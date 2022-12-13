@@ -1,11 +1,12 @@
 import { Table } from "@nextui-org/react";
-type Props = {
+export type TableProps = {
   columns: string[];
   rows: string[][];
   id: string;
 };
 
-const SittlyTable = ({ columns, rows, id }: Props) => {
+const SittlyTable = ({ columns, rows, id }: TableProps) => {
+  if (!columns || !rows) return null;
   return (
     <Table
       compact
@@ -14,12 +15,12 @@ const SittlyTable = ({ columns, rows, id }: Props) => {
       }}
     >
       <Table.Header>
-        {columns.map((col) => (
+        {columns?.map((col) => (
           <Table.Column>{col}</Table.Column>
         ))}
       </Table.Header>
       <Table.Body>
-        {rows.map((row, index) => (
+        {rows?.map((row, index) => (
           <Table.Row key={index + "col" + id}>
             {row.map((col) => (
               <Table.Cell

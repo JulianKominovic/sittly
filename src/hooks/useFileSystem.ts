@@ -3,14 +3,17 @@ import React, { useState } from "react";
 import useAsync from "./useAsync";
 import { File, FileWithContent } from "../../electron/types/file";
 import CancelablePromise, { cancelable } from "cancelable-promise";
+import useLoading from "./useLoading";
 
 const useFileSystem = () => {
-  const { doAsyncAbortableOperation, doAsyncOperation } = useAsync();
+  const { doShortAsyncCancelableOperation, doShortAsyncOperation } =
+    useLoading();
 
   const [controller, setController] = useState(new AbortController());
 
   const getHomedir = async () => {
-    const promise = doAsyncOperation<string>(
+    const promise = doShortAsyncOperation<string>(
+      "Buscando el directorio home",
       new Promise((resolve, reject) => {
         ipcRenderer.send("get-home-dir");
         ipcRenderer.once("get-home-dir", (evt, response) => {
@@ -24,7 +27,8 @@ const useFileSystem = () => {
   const getFileInfo = (path: string) => {
     controller.abort();
     const control = new AbortController();
-    const promise = doAsyncAbortableOperation<FileWithContent>(
+    const promise = doShortAsyncCancelableOperation<FileWithContent>(
+      "Trayendo el contenido del archivo",
       new Promise((resolve, reject) => {
         const handler = (evt, response) => {
           console.log(response);
@@ -42,15 +46,13 @@ const useFileSystem = () => {
     );
     setController(control);
     return promise;
-
-    // const promise = (await ipcRenderer.invoke("read-file", path)).data;
-    // return doAsyncOperation(promise);
   };
 
   const getDirectoryFiles = (path: string) => {
     controller.abort();
     const control = new AbortController();
-    const promise = doAsyncAbortableOperation<File[]>(
+    const promise = doShortAsyncCancelableOperation<File[]>(
+      "Trayendo el contenido del directorio",
       new Promise((resolve, reject) => {
         ipcRenderer.send("read-dir", path);
         ipcRenderer.once("read-dir", (evt, response) => {
@@ -73,7 +75,8 @@ const useFileSystem = () => {
     controller.abort();
     const control = new AbortController();
 
-    const promise = doAsyncAbortableOperation<File[]>(
+    const promise = doShortAsyncCancelableOperation<File[]>(
+      "Buscando el archivo",
       new Promise((resolve, reject) => {
         ipcRenderer.send("find-file", filename);
         ipcRenderer.once("find-file", (evt, response) => {

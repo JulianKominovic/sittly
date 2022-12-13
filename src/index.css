@@ -113,6 +113,25 @@ body {
     display: none;
   }
 }
+
+/* beat animation */
+@keyframes beat {
+  0% {
+    transform: scale(0.7);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(0.7);
+  }
+}
+.animation-beat {
+  animation: beat 0.5s infinite;
+}
+
 .nextui-backdrop-layer-default {
   border-radius: 24px;
 }

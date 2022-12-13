@@ -96,12 +96,7 @@ function ListItem({
           mr: "auto",
         }}
       >
-        <Icon
-          imageSrc={imageSrc}
-          title={title}
-          icon={icon}
-          iconSize={iconSize}
-        />
+        <Icon imageSrc={imageSrc} title={title} icon={icon} />
 
         <Container
           as="aside"

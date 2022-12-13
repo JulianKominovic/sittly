@@ -3,9 +3,10 @@ import React, { useMemo } from "react";
 import { BsArrowRightShort } from "react-icons/bs";
 import { useLocation } from "react-router";
 import firstLetterUpperCase from "../../lib/firstLetterUpperCase";
+import { useLoadingStore } from "../../store/loadingStore";
 import { AsyncStatusEnum, useStatusStore } from "../../store/statusbarStore";
 import FooterBreadcumbItem from "./components/FooterBreadcumbItem";
-import { chooseRenderByStatus } from "./components/FooterStatus";
+import { FooterStatus } from "./components/FooterStatus";
 import Helper from "./Helper";
 
 const Footer = () => {
@@ -34,6 +35,9 @@ const Footer = () => {
 
     return AsyncStatusEnum.IN_PROGRESS;
   }, [asyncOperations]);
+
+  const loadingOperations = useLoadingStore((state) => state.asyncOperations);
+
   const { pathname } = useLocation();
   const paths = pathname.split("/").filter(Boolean);
   return (
@@ -57,7 +61,9 @@ const Footer = () => {
         overflow: "hidden",
         "&::before": {
           background:
-            asyncStatus === AsyncStatusEnum.SUCCESS
+            loadingOperations?.length > 0
+              ? "linear-gradient(90deg,transparent,transparent, rgba(230, 230, 230, 0.2), transparent)"
+              : asyncStatus === AsyncStatusEnum.SUCCESS
               ? "linear-gradient(90deg,transparent,transparent, rgba(111, 255, 0, 0.2), transparent)"
               : asyncStatus === AsyncStatusEnum.FAIL
               ? "linear-gradient(90deg,transparent,transparent, rgba(255, 0, 0, 0.2), transparent)"
@@ -66,12 +72,14 @@ const Footer = () => {
               : "$backgroundAlpha",
           backgroundSize: "200% 100%",
           animation:
-            asyncStatus !== AsyncStatusEnum.IDLE
+            asyncStatus !== AsyncStatusEnum.IDLE ||
+            loadingOperations?.length > 0
               ? "gradient 2s infinite"
               : "none",
           position: "absolute",
           left: "$0",
           bottom: "$0",
+          top: "$0",
           content: "",
           zIndex: "-1",
           w: "100%",
@@ -104,27 +112,34 @@ const Footer = () => {
           p: "0",
         }}
       >
-        {asyncStatus !== AsyncStatusEnum.IDLE
-          ? chooseRenderByStatus(asyncStatus, asyncOperations)
-          : paths.map((path, index) => {
-              const isTheLastItem = index === paths.length - 1;
-              return (
-                <div key={"footer" + index} className="footer-links-steps">
-                  <FooterBreadcumbItem
-                    to={
-                      index === 1
-                        ? path
-                        : paths.slice(index).concat(path).join("/")
-                    }
-                    label={firstLetterUpperCase(path)}
-                    isFirstItem={index === 0}
-                  />
-                  {isTheLastItem ? null : (
-                    <BsArrowRightShort className="inline text-lg" />
-                  )}
-                </div>
-              );
-            })}
+        {asyncStatus !== AsyncStatusEnum.IDLE ||
+        loadingOperations?.length > 0 ? (
+          <FooterStatus
+            operations={asyncOperations}
+            status={asyncStatus}
+            shortOperations={loadingOperations}
+          />
+        ) : (
+          paths.map((path, index) => {
+            const isTheLastItem = index === paths.length - 1;
+            return (
+              <div key={"footer" + index} className="footer-links-steps">
+                <FooterBreadcumbItem
+                  to={
+                    index === 1
+                      ? path
+                      : paths.slice(index).concat(path).join("/")
+                  }
+                  label={firstLetterUpperCase(path)}
+                  isFirstItem={index === 0}
+                />
+                {isTheLastItem ? null : (
+                  <BsArrowRightShort className="inline text-lg" />
+                )}
+              </div>
+            );
+          })
+        )}
       </Container>
 
       <Helper />
