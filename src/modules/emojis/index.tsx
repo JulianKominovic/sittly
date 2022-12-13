@@ -74,13 +74,16 @@ const Emojis = () => {
     });
   };
 
-  const emojiRenderer = (item: {
-    emoji: BaseEmoji["emoji"];
-    description: BaseEmoji["description"];
-    category: BaseEmoji["category"];
-    numberOfTimesUsed?: number;
-    variations: BaseEmoji[];
-  }): ListItemProps => {
+  const emojiRenderer = (
+    item: {
+      emoji: BaseEmoji["emoji"];
+      description: BaseEmoji["description"];
+      category: BaseEmoji["category"];
+      numberOfTimesUsed?: number;
+      variations: BaseEmoji[];
+    },
+    index: number
+  ): ListItemProps => {
     return {
       divider: false,
       title: item.description,
@@ -88,6 +91,7 @@ const Emojis = () => {
       icon: item.emoji,
       iconSize: "3xl",
       largeSize: "HALF",
+      id: index + "emoji",
       numberOfTimesUsed: (item as any).numberOfTimesUsed ?? 0,
       onFocus() {
         const alwaysHelperOptions: HelperAction[0] = {
@@ -179,6 +183,7 @@ const Emojis = () => {
             database?.filter((em) => em.description.includes(value))?.length > 0
               ? [
                   {
+                    id: "div-frec",
                     divider: true,
                     label: "Frecuentes",
                     marginTop: 4,
@@ -188,13 +193,14 @@ const Emojis = () => {
               : []),
             ...database
               .filter((em) => em.description.includes(value))
-              .map((em) => {
-                return emojiRenderer(em as any);
+              .map((em, index) => {
+                return emojiRenderer(em as any, index);
               })
               .sort((a, b) => b.numberOfTimesUsed - a.numberOfTimesUsed),
             ...(memoizedEmojis.length > 0
               ? [
                   {
+                    id: "div-emojis",
                     divider: true,
                     label: "Emojis",
                     marginTop: 8,
@@ -202,8 +208,8 @@ const Emojis = () => {
                   },
                 ]
               : []),
-            ...memoizedEmojis.map(({ obj: item }) => {
-              return emojiRenderer(item as any);
+            ...memoizedEmojis.map(({ obj: item }, index) => {
+              return emojiRenderer(item as any, index);
             }),
           ] as any
         }

@@ -13,11 +13,13 @@ import useFileSystem from "../../hooks/useFileSystem";
 import useHelper from "../../hooks/useHelper";
 import useOpenApp from "../../hooks/useOpenApp";
 import useQuerybar from "../../hooks/useQuerybar";
+import { niceBytes } from "../../lib/niceBytes";
 import { HelperAction } from "../../store/helperStore";
 import { LoadingEnum } from "../../store/loadingStore";
 import { AsyncStatusEnum } from "../../store/statusbarStore";
 import ListItem, { ListItemProps } from "../../ui/list/ListItem";
 import VirtualizedList from "../../ui/list/VirtualizedList";
+import SidebarDetailsLayout from "../../ui/sidebar-details/SidebarDetails";
 import rescueFocusedElement from "../../ui/utils/rescueFocusedElement";
 import Preview from "./Preview";
 import { getTypeOfFile } from "./utils/getTypeOfFile";
@@ -256,37 +258,44 @@ const FileManager = (props: Props) => {
   );
 
   return (
-    <Container
-      css={{
-        p: "0",
-        m: "0",
-        display: "flex",
-        flexDirection: "row",
-        h: "400px",
-        ".virtualized-list": {
-          width: "50%",
-        },
+    <SidebarDetailsLayout
+      imageSrc={(() => {
+        const type = getTypeOfFile(files?.[index]?.extension);
+        if (type === "IMAGE") {
+          return `data:image/${files?.[index]?.extension.slice(1)};base64,${
+            files?.[index]?.base64
+          }`;
+        } else if (type === "HTML") {
+          return `data:image/svg+xml;base64,${files?.[index]?.base64}`;
+        }
+        return `/public/icons/${
+          files?.[index]?.extension === ""
+            ? getIconForFolder(files?.[index]?.name)
+            : getIconForFile(
+                files?.[index]?.name + files?.[index]?.extension || ""
+              )
+        }`;
+      })()}
+      table={{
+        id: "preview-file",
+        columns: ["Item", "Valor"],
+        rows: [
+          ["Nombre", files?.[index]?.name],
+          ["Ubicacion", files?.[index]?.path],
+          ["Extension", files?.[index]?.extension],
+          [
+            "Ultima modificacion",
+            Intl.DateTimeFormat("es", {
+              dateStyle: "long",
+              timeStyle: "medium",
+            }).format(files?.[index]?.lastModified),
+          ],
+          ["Tamaño", niceBytes(files?.[index]?.info?.size || 0)],
+        ],
       }}
     >
       <VirtualizedList list={listItems} />
-      <Preview
-        base64Img={(() => {
-          const type = getTypeOfFile(files?.[index]?.extension);
-          if (type === "IMAGE") {
-            return `data:image/${files?.[index]?.extension.slice(1)};base64,${
-              files?.[index]?.base64
-            }`;
-          } else if (type === "HTML") {
-            return `data:image/svg+xml;base64,${files?.[index]?.base64}`;
-          }
-        })()}
-        extension={files?.[index]?.extension}
-        lastModified={files?.[index]?.info?.mtime}
-        name={files?.[index]?.name}
-        size={files?.[index]?.info?.size}
-        path={files?.[index]?.path}
-      />
-    </Container>
+    </SidebarDetailsLayout>
   );
 };
 

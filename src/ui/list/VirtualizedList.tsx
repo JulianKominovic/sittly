@@ -11,10 +11,12 @@ type Divider = {
   marginTop?: number;
   marginBottom?: number;
 };
-type ListItem = (ListItemProps | Divider) & { id: string };
+export type ListItem = ((ListItemProps & { divider: false }) | Divider) & {
+  id: string;
+};
 type ListProps = {
   list: ListItem[];
-  css: CSS;
+  css?: CSS;
 };
 
 const Row = (_: number, data: ListItem) =>
@@ -29,13 +31,22 @@ type VirtuosoRef = HTMLElement & {
 };
 const List = ({ list, css }: ListProps) => {
   const virtuosoRef = useRef<VirtuosoRef | undefined>(undefined);
+  const [heightOffset, setHeightOffset] = useState(0);
   if (virtuosoRef.current !== null) {
     virtuosoRef.current?.scrollToIndex({
       index: 0,
       align: "center",
     });
   }
-
+  useEffect(() => {
+    console.log(
+      document.querySelector(".virtualized-list")?.getBoundingClientRect()
+    );
+    setHeightOffset(
+      document.querySelector(".virtualized-list")?.getBoundingClientRect().top -
+        40
+    );
+  }, []);
   return (
     <Container
       className="virtualized-list"
@@ -57,7 +68,7 @@ const List = ({ list, css }: ListProps) => {
         react18ConcurrentRendering
         tabIndex={-1}
         style={{
-          height: 420,
+          height: 420 - heightOffset,
           width: "100%",
         }}
         totalCount={list.length}
@@ -73,7 +84,7 @@ const MemoizedList = React.memo(List, ({ list }, { list: newList }) => {
   const conditions =
     list.length === newList.length &&
     list.every((item, index) => {
-      return item === newList[index];
+      return item.id === newList[index].id;
     });
   return conditions;
 });

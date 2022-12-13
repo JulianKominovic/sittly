@@ -5,6 +5,7 @@ import { IoApps } from "react-icons/io5";
 import { HiCommandLine, HiHome } from "react-icons/hi2";
 import { Navigate, RouteProps, useNavigate } from "react-router";
 import { RiSettingsFill } from "react-icons/ri";
+import { SiConvertio } from "react-icons/si";
 import useQuerybar from "../../hooks/useQuerybar";
 import List from "../../ui/list";
 import Config from "../config";
@@ -18,6 +19,7 @@ import PreviewIndex from "../commands/preview/PreviewIndex";
 import { FiFile, FiLink } from "react-icons/fi";
 import LinkSaver from "../links";
 import FileManager from "../file-manager";
+import UnitsConversion from "../units-conversion";
 
 type OnlyQuerybarModuleProps = {
   querybar: {
@@ -159,6 +161,21 @@ export const INDEX: Manifest[] = [
         {
           index: true,
           element: <FileManager />,
+        },
+      ],
+    },
+  },
+  {
+    module: "Convertir unidades",
+    displayName: "Convertir unidades",
+    description: "Conversor de unidades.",
+    icon: <SiConvertio />,
+    entryPoint: {
+      onlyQuerybarFuncion: false,
+      routes: [
+        {
+          index: true,
+          element: <UnitsConversion />,
         },
       ],
     },
